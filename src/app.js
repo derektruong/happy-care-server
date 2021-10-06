@@ -1,6 +1,8 @@
 require("./db/mongoose");
 const express = require("express");
 const env = require("./config/env");
+const logger = require("./config/logger");
+const UserRoute = require("./routes/user.route");
 
 const app = express();
 const PORT = env.PORT;
@@ -9,8 +11,9 @@ const PORT = env.PORT;
 app.use(express.json());
 
 // register router here
+app.use(UserRoute);
 
 // Run app
 app.listen(PORT, () => {
-    console.log("Listening on port " + PORT);
+	logger.Info("Listening on port " + PORT);
 });
