@@ -13,9 +13,17 @@ router.post("/api/users/login", User.loginUser);
 router.post("/api/users/logout", auth, User.logoutUser);
 
 // GET
+// router.get("/api/users", auth, User.getUsers);
+
 router.get("/api/users/me", auth, User.getUserInfo);
 
+router.get("/api/users/:id", User.getUserInfoById);
+
 // PATCH
+router.patch("/api/users/me", auth, User.updateUser);
+
+// DELETE
+router.delete("/api/users/me", auth, User.deleteUser);
 
 
 // * exports
