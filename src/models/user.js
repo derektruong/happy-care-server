@@ -37,10 +37,11 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
+			require: true,
             default: "member",
             validate: (value) => {
-                if (!["member", "doctor"].includes(value)) {
-                    throw new Error("role must be a member or doctor");
+                if (!["admin", "doctor", "member"].includes(value)) {
+                    throw new Error("role must be a doctor or member");
                 }
             },
         },

@@ -1,70 +1,103 @@
 const Specialist = require("../models/specialist");
 
 const createSpecialist = async (req, res) => {
-	const specialist = Specialist(req.body);
-	try {
-		await specialist.save();
+    const specialist = Specialist(req.body);
+    try {
+		// authorizate adminstrator
+        if (res.user.role !== "admin") {
+            return res
+                .status(400)
+                .json({
+                    error: "unauthorized for people have no adminstrator role",
+                });
+        }
 
-		res.json({message: "add specialist successfully"});
-	} catch (error) {
-		res.status(500).json({error: error.message});
-	}
+        await specialist.save();
+        res.json({ message: "add specialist successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 const getSpecialist = async (req, res) => {
-	try {
-		const specialist = await Specialist.find({});
-		res.json({message: "get all specialists successfully", specialist});
-	} catch (error) {
-		res.status(500).json({error: error.message});
-	}
+    try {
+        const specialist = await Specialist.find({});
+
+        res.json({ message: "get all specialists successfully", specialist });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 const updateSpecialist = async (req, res) => {
-	try {
-		const specialist = await Specialist.findById(req.params.id);
+    try {
+		// authorizate adminstrator
+		if (res.user.role !== "admin") {
+            return res
+                .status(400)
+                .json({
+                    error: "unauthorized for people have no adminstrator role",
+                });
+        }
 
-		if(!specialist) {
-			return res.status(404).json({ error: "specialist not found"});
-		}
-		const updates = Object.keys(req.body);
-		const allowedUpdate = ["name", "description"];
+		// handler 
+        const specialist = await Specialist.findById(req.params.id);
 
-		const isValidOperator = updates.every(update => allowedUpdate.includes(update));
+        if (!specialist) {
+            return res.status(404).json({ error: "specialist not found" });
+        }
+        const updates = Object.keys(req.body);
+        const allowedUpdate = ["name", "description"];
 
-		if(!isValidOperator) {
-			return res.status(400).json({ error: "you cannot update with these fields" });
-		}
+        const isValidOperator = updates.every((update) =>
+            allowedUpdate.includes(update)
+        );
 
-		updates.forEach(update => {
-			specialist[update] = req.body[update];
-		});
+        if (!isValidOperator) {
+            return res
+                .status(400)
+                .json({ error: "you cannot update with these fields" });
+        }
 
-		await specialist.save();
+        updates.forEach((update) => {
+            specialist[update] = req.body[update];
+        });
 
-		res.json({message: "update specialist successfully"});
-	} catch(error) {
-		res.status(500).json({error: error.message});
-	}
+        await specialist.save();
+
+        res.json({ message: "update specialist successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 const deleteSpecialist = async (req, res) => {
-	try {
-		const specialist = await Specialist.findByIdAndDelete(req.params.id);
+    try {
+		// authorizate adminstrator
+		if (res.user.role !== "admin") {
+            return res
+                .status(400)
+                .json({
+                    error: "unauthorized for people have no adminstrator role",
+                });
+        }
 
-		if(!specialist) {
-			return res.status(404).json({ error: "specialist not found"});
-		}
+		// handler
+        const specialist = await Specialist.findByIdAndDelete(req.params.id);
 
-		res.json({message: "deleted specialist successfully"});
-	} catch (error) {
-		res.status(500).json({error: error.message});
-	}
+        if (!specialist) {
+            return res.status(404).json({ error: "specialist not found" });
+        }
+
+        res.json({ message: "deleted specialist successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 module.exports = {
-	createSpecialist,
-	getSpecialist,
-	updateSpecialist,
-	deleteSpecialist,
+    createSpecialist,
+    getSpecialist,
+    updateSpecialist,
+    deleteSpecialist,
 };

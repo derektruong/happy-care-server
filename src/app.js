@@ -17,5 +17,5 @@ app.use(SpecialistRoute);
 
 // Run app
 app.listen(PORT, () => {
-	logger.Info("Listening on port " + PORT);
+	logger.Info("🚀 Listening on port " + PORT);
 });
