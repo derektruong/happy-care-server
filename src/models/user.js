@@ -4,11 +4,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const env = require("../config/env");
 
+const options = { timestamps: true };
 const userSchema = new mongoose.Schema(
     {
         email: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
             trim: true,
             lowercase: true,
@@ -21,12 +22,11 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             require: true,
-            unique: true,
             trim: true,
-            minLength: 6,
             validate: (value) => {
                 if (
                     !validator.isStrongPassword(value, {
+                        minLength: 4,
                         minUppercase: 0,
                         minSymbols: 0,
                     })
@@ -37,30 +37,49 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
+			require: true,
             default: "member",
             validate: (value) => {
-                if (!["member", "doctor"].includes(value)) {
-                    throw new Error("role must be a member or doctor");
+                if (!["admin", "doctor", "member"].includes(value)) {
+                    throw new Error("role must be a doctor or member");
                 }
             },
         },
         profile: {
-            fullName: {
+            fullname: {
                 type: String,
-                default: "Nguyen Van A",
-                required: true,
                 trim: true,
                 minLength: 6,
+                validator: (value) => {
+                    const re = new RegExp("/^[a-zA-Z]+( [a-zA-Z]+)+$/");
+                    if (!re.test(value.toLowerCase())) {
+                        throw new Error("fullname is invalid");
+                    }
+                },
             },
             age: {
                 type: Number,
-                default: 15,
-                require: true,
                 validator: (value) => {
                     if (value < 15) {
-                        throw new Error("user must at least 15 year olds!");
+                        throw new Error("user must at least 15 year olds");
                     }
                 },
+            },
+            phone: {
+                type: String,
+                trim: true,
+                validator: (value) => {
+                    const re = new RegExp(
+                        "/^(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})$/"
+                    );
+                    if (!re.test(value)) {
+                        throw new Error("phone is invalid");
+                    }
+                },
+            },
+            address: {
+                type: String,
+                trim: true,
             },
             avatar: {
                 type: Buffer,
@@ -70,15 +89,14 @@ const userSchema = new mongoose.Schema(
             {
                 token: {
                     type: String,
-                    require: true,
+                    required: true,
                 },
             },
         ],
     },
-    {
-        timestamp: true,
-    }
+    options
 );
+
 // #region methods
 
 // * toJSON
@@ -96,9 +114,13 @@ userSchema.methods.toJSON = function () {
 userSchema.methods.generateAuthToken = async function () {
     try {
         const user = this;
-        const token = jwt.sign({ _id: user._id.toString() }, env.SECRET, {
-            expiresIn: "30 days",
-        });
+        const token = jwt.sign(
+            { _id: user._id.toString(), role: user.role },
+            env.SECRET,
+            {
+                expiresIn: "30 days",
+            }
+        );
 
         user.tokens = user.tokens.concat({ token });
 
