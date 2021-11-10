@@ -16,6 +16,8 @@ app.use(UserRoute);
 app.use(SpecialistRoute);
 
 // Run app
-app.listen(PORT, () => {
-  logger.Info('🚀 Listening on port ' + PORT);
-});
+// app.listen(PORT, () => {
+//   logger.Info('🚀 Listening on port ' + PORT);
+// });
+
+module.exports = app;

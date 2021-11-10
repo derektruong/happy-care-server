@@ -1,4 +1,4 @@
-const Specialist = require('../models/specialist');
+const Specialist = require('../models/specialist.model');
 
 const createSpecialist = async (req, res) => {
   const specialist = Specialist(req.body);
