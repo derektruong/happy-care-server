@@ -8,15 +8,13 @@ const app = express();
 
 // automatically pass incoming json to an object so we can access it in our request.
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 try {
-	// register router here
-	initRoutes(app);
+  // register router here
+  initRoutes(app);
 } catch (error) {
-	logger.Error(error.message);
+  logger.Error(error.message);
 }
-
-
 
 module.exports = app;

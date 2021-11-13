@@ -15,7 +15,7 @@ const expiredTokenHandle = async (res, token) => {
     return res.status(404).json({ error: 'user not found' });
   }
 
-  user.tokens = user.tokens.filter((userToken) => userToken.token !== token);
+  user.token = '';
 
   await user.save();
 };
@@ -30,7 +30,6 @@ const auth = async (req, res, next) => {
     if (!user) {
       throw new Error('user not found');
     }
-
     res.user = user;
     res.token = token;
 

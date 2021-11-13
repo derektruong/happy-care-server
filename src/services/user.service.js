@@ -1,6 +1,6 @@
 const User = require('../models/user.model');
 
-const createUser = async (userFields) => {
+const createUser = async ({ userFields }) => {
   try {
     const user = User(userFields);
     await user.save();
@@ -10,7 +10,7 @@ const createUser = async (userFields) => {
   }
 };
 
-const loginUser = async (email, password) => {
+const loginUser = async ({ email, password }) => {
   try {
     const user = await User.findByCredentials(email, password);
     const token = await user.generateAuthToken();
@@ -21,9 +21,9 @@ const loginUser = async (email, password) => {
   }
 };
 
-const logoutUser = async (user) => {
+const logoutUser = async ({ user }) => {
   try {
-    user.tokens = '';
+    user.token = '';
     await user.save();
 
     return;
@@ -32,7 +32,7 @@ const logoutUser = async (user) => {
   }
 };
 
-const getUserInfoById = async (userId) => {
+const getUserInfoById = async ({ userId }) => {
   try {
     const user = await User.findById(userId);
 
@@ -52,7 +52,7 @@ const getUserInfoById = async (userId) => {
   }
 };
 
-const updateUser = async (user, updateFields) => {
+const updateUser = async ({ user, updateFields, updateBody }) => {
   try {
     const allowedUpdate = ['email', 'password', 'profile', 'background'];
 
@@ -75,11 +75,10 @@ const updateUser = async (user, updateFields) => {
     }
 
     updateFields.forEach((update) => {
-      user[update] = req.body[update];
+      user[update] = updateBody[update];
     });
 
     await user.save();
-
     return { user };
   } catch (error) {
     throw {

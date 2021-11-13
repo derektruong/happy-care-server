@@ -107,7 +107,6 @@ const userSchema = new mongoose.Schema(
     token: {
       type: String,
       trim: true,
-      required: true,
     },
   },
   options
@@ -120,8 +119,13 @@ userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
 
+  if (userObject.role === 'member') {
+    delete userObject.background;
+  }
+
   delete userObject.password;
-  delete userObject.tokens;
+  delete userObject.__v;
+  delete userObject.token;
   delete userObject.avatar;
 
   return userObject;

@@ -1,59 +1,64 @@
-const Specialization = require('../models/specialization.model');
+const SpecializationService = require('../services/specialization.service');
+const { generateBasicResponse } = require('../helpers/api.helper');
 
 const createSpecialization = async (req, res) => {
-  const specialization = Specialization(req.body);
   try {
+    const specialization = req.body;
     // authorizate adminstrator
-    if (res.user.role !== 'admin') {
-      return res.status(400).json({
-        error: 'unauthorized for people have no adminstrator role',
-      });
-    }
+    await SpecializationService.createSpecialization({
+      user: res.user,
+      createBody: specialization,
+    });
 
-    await specialization.save();
-    res.json({ message: 'add specialization successfully' });
+    res.json(
+      generateBasicResponse(true, false, 'create specialization successfully')
+    );
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const { status, message } = error;
+    if (status === 400) {
+      return res.status(400).json(generateBasicResponse(false, false, message));
+    }
+    res.status(500).json(generateBasicResponse(false, true, message));
   }
 };
 
 const addSpecializationForUser = async (req, res) => {
   try {
-    if (res.user.role === 'admin') {
-      return res
-        .status(400)
-        .json({ error: "admin doesn't have this permission" });
-    }
+    await SpecializationService.addSpecializationForUser({
+      user: res.user,
+      specializations: req.body.specialization,
+    });
 
-    const specializations = req.body.specialization;
-    const user = res.user;
-
-    user.specializations = [];
-    for (let specialization of specializations) {
-      const isExist = await Specialization.findOne({ name: specialization.name });
-
-      if (!isExist) {
-        return res.status(400).json({ error: 'this specialization is not exists' });
-      }
-
-      user.specializations = [...user.specializations, specialization.name];
-    }
-
-    await user.save();
-
-    res.json({ message: 'add specialization successfully' });
+    res.json(
+      generateBasicResponse(
+        true,
+        false,
+        'add specialization for user successfully'
+      )
+    );
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const { status, message } = error;
+    if (status === 400) {
+      return res.status(400).json(generateBasicResponse(false, false, message));
+    }
+    res.status(500).json(generateBasicResponse(false, true, message));
   }
 };
 
 const getAllSpecialization = async (req, res) => {
   try {
-    const specialization = await Specialization.find({});
+    const rs = await SpecializationService.getAllSpecialization();
 
-    res.json({ message: 'get all specializations successfully', specialization });
+    res.json({
+      ...generateBasicResponse(
+        true,
+        false,
+        'get all specialization successfully'
+      ),
+      data: rs,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json(generateBasicResponse(false, true, error.message));
   }
 };
 
@@ -62,75 +67,52 @@ const getSpecializationOfUser = async (req, res) => {
     if (res.user.role === 'admin') {
       return res
         .status(400)
-        .json({ error: "admin doesn't have this permission" });
+        .json(
+          generateBasicResponse(
+            false,
+            false,
+            "admin doesn't have this permission"
+          )
+        );
     }
 
-    res.json(res.user.specializations);
+    res.json({
+      ...generateBasicResponse(
+        true,
+        false,
+        'get specialization of user successfully'
+      ),
+      data: { specializations: res.user.specializations },
+    });
   } catch (error) {
-    console.log('Hello');
-    res.status(500).json({ error: error.message });
+    res.status(500).json(generateBasicResponse(false, true, error.message));
   }
 };
 
 const updateSpecialization = async (req, res) => {
   try {
-    // authorizate adminstrator
-    if (res.user.role !== 'admin') {
-      return res.status(400).json({
-        error: 'unauthorized for people have no adminstrator role',
-      });
-    }
-
-    // handler
-    const specialization = await Specialization.findById(req.params.id);
-
-    if (!specialization) {
-      return res.status(404).json({ error: 'specialization not found' });
-    }
-    const updates = Object.keys(req.body);
-    const allowedUpdate = ['name', 'description'];
-
-    const isValidOperator = updates.every((update) =>
-      allowedUpdate.includes(update)
-    );
-
-    if (!isValidOperator) {
-      return res
-        .status(400)
-        .json({ error: 'you cannot update with these fields' });
-    }
-
-    updates.forEach((update) => {
-      specialization[update] = req.body[update];
+    await SpecializationService.updateSpecialization({
+      user: res.user,
+      updateFields: Object.keys(req.body),
+      updateBody: req.body,
+      specializationId: req.params.id,
     });
 
-    await specialization.save();
-
-    res.json({ message: 'update specialization successfully' });
+    res.json(generateBasicResponse(true, false, 'update specialization successfully'));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const { status, message } = error;
+    res.status(status).json(generateBasicResponse(false, true, message));
   }
 };
 
 const deleteSpecialization = async (req, res) => {
   try {
-    // authorizate adminstrator
-    if (res.user.role !== 'admin') {
-      return res.status(400).json({
-        error: 'unauthorized for people have no adminstrator role',
-      });
-    }
+    await SpecializationService.deleteSpecialization({user: res.user, specializationId: req.params.id});
 
-    // handler
-    const specialization = await Specialization.findByIdAndDelete(req.params.id);
-
-    if (!specialization) {
-      return res.status(404).json({ error: 'specialization not found' });
-    }
-
-    res.json({ message: 'deleted specialization successfully' });
+    res.json(generateBasicResponse(true, false, 'delete specialization successfully'));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const { status, message } = error;
+    res.status(status).json(generateBasicResponse(false, true, message));
   }
 };
 

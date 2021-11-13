@@ -5,7 +5,7 @@ const { generateBasicResponse } = require('../helpers/api.helper');
 //#region auththentication
 const createUser = async (req, res) => {
   try {
-    const { message } = await UserService.createUser(req.body);
+    await UserService.createUser({ userFields: req.body });
     res
       .status(200)
       .json(generateBasicResponse(true, false, 'user signed up successfully'));
@@ -16,10 +16,10 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { user, token } = await UserService.loginUser(
-      req.body.email,
-      req.body.password
-    );
+    const { user, token } = await UserService.loginUser({
+      email: req.body.email,
+      password: req.body.password,
+    });
     res.status(200).json({
       ...generateBasicResponse(true, false, 'user logged in successfully'),
       data: {
@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    await UserService.logoutUser(req.user);
+    await UserService.logoutUser({ user: res.user });
     res.json(
       generateBasicResponse(true, false, 'user logged out successfully')
     );
@@ -49,7 +49,7 @@ const getUserInfo = async (req, res) => {
   try {
     res.json({
       ...generateBasicResponse(true, false, 'user was found'),
-      data: res.user,
+      data: { user: res.user },
     });
   } catch (error) {
     res.status(500).json(generateBasicResponse(false, true, error.message));
@@ -58,8 +58,7 @@ const getUserInfo = async (req, res) => {
 
 const getUserInfoById = async (req, res) => {
   try {
-    const id = req.params.id;
-    const rs = await UserService.getUserInfoById(id);
+    const rs = await UserService.getUserInfoById({ userId: req.params.id });
 
     res.json({
       ...generateBasicResponse(true, false, 'user was found'),
@@ -79,7 +78,7 @@ const updateUser = async (req, res) => {
   try {
     const updateFields = Object.keys(req.body);
     const user = res.user;
-    const rs = await UserService.updateUser(user, updateFields);
+    const rs = await UserService.updateUser({ user, updateFields, updateBody: req.body });
 
     res.json({
       ...generateBasicResponse(true, false, 'user was updated successfully'),
