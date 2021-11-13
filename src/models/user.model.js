@@ -57,6 +57,15 @@ const userSchema = new mongoose.Schema(
           }
         },
       },
+      gender: {
+        type: String,
+        trim: true,
+        validator: (value) => {
+          if (!['female', 'male'].includes(value)) {
+            throw new Error('gender is invalid, male or female is required');
+          }
+        },
+      },
       age: {
         type: Number,
         validator: (value) => {
@@ -83,15 +92,23 @@ const userSchema = new mongoose.Schema(
         type: Buffer,
       },
     },
-    specialists: [{ type: String }],
-    tokens: [
+    specializations: [{ type: String }],
+    background: [
       {
-        token: {
-          type: String,
-          required: true,
+        figure: {
+          type: Buffer,
         },
-      },
+        description: {
+          type: String,
+          trim: true
+        }
+      }
     ],
+    token: {
+      type: String,
+      trim: true,
+      required: true,
+    },
   },
   options
 );
@@ -117,11 +134,11 @@ userSchema.methods.generateAuthToken = async function () {
       { _id: user._id.toString(), role: user.role },
       env.SECRET,
       {
-        expiresIn: '30 days',
+        expiresIn: '60 days',
       }
     );
 
-    user.tokens = user.tokens.concat({ token });
+    user.token = token;
 
     await user.save();
 

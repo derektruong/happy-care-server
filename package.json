@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node ./src/bin/www",
-        "dev": "nodemon ./src/bin/www -e js",
+        "start": "node ./src/bin/www.js",
+        "dev": "nodemon ./src/bin/www.js -e js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],

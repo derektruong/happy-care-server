@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const options = { timestamps: true };
-const specialistSchema = mongoose.Schema(
+const specializationSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -17,6 +17,6 @@ const specialistSchema = mongoose.Schema(
   options
 );
 
-const Specialist = mongoose.model('Specialist', specialistSchema);
+const Specialization = mongoose.model('Specialization', specializationSchema);
 
-module.exports = Specialist;
+module.exports = Specialization;

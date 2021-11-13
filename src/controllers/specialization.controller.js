@@ -1,7 +1,7 @@
-const Specialist = require('../models/specialist.model');
+const Specialization = require('../models/specialization.model');
 
-const createSpecialist = async (req, res) => {
-  const specialist = Specialist(req.body);
+const createSpecialization = async (req, res) => {
+  const specialization = Specialization(req.body);
   try {
     // authorizate adminstrator
     if (res.user.role !== 'admin') {
@@ -10,14 +10,14 @@ const createSpecialist = async (req, res) => {
       });
     }
 
-    await specialist.save();
-    res.json({ message: 'add specialist successfully' });
+    await specialization.save();
+    res.json({ message: 'add specialization successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const addSpecialistForUser = async (req, res) => {
+const addSpecializationForUser = async (req, res) => {
   try {
     if (res.user.role === 'admin') {
       return res
@@ -25,39 +25,39 @@ const addSpecialistForUser = async (req, res) => {
         .json({ error: "admin doesn't have this permission" });
     }
 
-    const specialists = req.body.specialist;
+    const specializations = req.body.specialization;
     const user = res.user;
 
-    user.specialists = [];
-    for (let specialist of specialists) {
-      const isExist = await Specialist.findOne({ name: specialist.name });
+    user.specializations = [];
+    for (let specialization of specializations) {
+      const isExist = await Specialization.findOne({ name: specialization.name });
 
       if (!isExist) {
-        return res.status(400).json({ error: 'this specialist is not exists' });
+        return res.status(400).json({ error: 'this specialization is not exists' });
       }
 
-      user.specialists = [...user.specialists, specialist.name];
+      user.specializations = [...user.specializations, specialization.name];
     }
 
     await user.save();
 
-    res.json({ message: 'add specialist successfully' });
+    res.json({ message: 'add specialization successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const getAllSpecialist = async (req, res) => {
+const getAllSpecialization = async (req, res) => {
   try {
-    const specialist = await Specialist.find({});
+    const specialization = await Specialization.find({});
 
-    res.json({ message: 'get all specialists successfully', specialist });
+    res.json({ message: 'get all specializations successfully', specialization });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const getSpecialistOfUser = async (req, res) => {
+const getSpecializationOfUser = async (req, res) => {
   try {
     if (res.user.role === 'admin') {
       return res
@@ -65,14 +65,14 @@ const getSpecialistOfUser = async (req, res) => {
         .json({ error: "admin doesn't have this permission" });
     }
 
-    res.json(res.user.specialists);
+    res.json(res.user.specializations);
   } catch (error) {
     console.log('Hello');
     res.status(500).json({ error: error.message });
   }
 };
 
-const updateSpecialist = async (req, res) => {
+const updateSpecialization = async (req, res) => {
   try {
     // authorizate adminstrator
     if (res.user.role !== 'admin') {
@@ -82,10 +82,10 @@ const updateSpecialist = async (req, res) => {
     }
 
     // handler
-    const specialist = await Specialist.findById(req.params.id);
+    const specialization = await Specialization.findById(req.params.id);
 
-    if (!specialist) {
-      return res.status(404).json({ error: 'specialist not found' });
+    if (!specialization) {
+      return res.status(404).json({ error: 'specialization not found' });
     }
     const updates = Object.keys(req.body);
     const allowedUpdate = ['name', 'description'];
@@ -101,18 +101,18 @@ const updateSpecialist = async (req, res) => {
     }
 
     updates.forEach((update) => {
-      specialist[update] = req.body[update];
+      specialization[update] = req.body[update];
     });
 
-    await specialist.save();
+    await specialization.save();
 
-    res.json({ message: 'update specialist successfully' });
+    res.json({ message: 'update specialization successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const deleteSpecialist = async (req, res) => {
+const deleteSpecialization = async (req, res) => {
   try {
     // authorizate adminstrator
     if (res.user.role !== 'admin') {
@@ -122,23 +122,23 @@ const deleteSpecialist = async (req, res) => {
     }
 
     // handler
-    const specialist = await Specialist.findByIdAndDelete(req.params.id);
+    const specialization = await Specialization.findByIdAndDelete(req.params.id);
 
-    if (!specialist) {
-      return res.status(404).json({ error: 'specialist not found' });
+    if (!specialization) {
+      return res.status(404).json({ error: 'specialization not found' });
     }
 
-    res.json({ message: 'deleted specialist successfully' });
+    res.json({ message: 'deleted specialization successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
-  createSpecialist,
-  addSpecialistForUser,
-  getAllSpecialist,
-  getSpecialistOfUser,
-  updateSpecialist,
-  deleteSpecialist,
+  createSpecialization,
+  addSpecializationForUser,
+  getAllSpecialization,
+  getSpecializationOfUser,
+  updateSpecialization,
+  deleteSpecialization,
 };

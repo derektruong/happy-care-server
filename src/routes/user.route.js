@@ -13,8 +13,6 @@ router.post('/api/users/login', User.loginUser);
 
 router.post('/api/users/logout', auth, User.logoutUser);
 
-router.post('/api/users/logout-all', auth, User.logoutAllUser);
-
 // GET
 // router.get("/api/users", auth, User.getUsers);
 
