@@ -33,5 +33,5 @@
 // });
 
 // const doctorSchema = mongoose.Schema({
-// 	specialist: [{ type: mongoose.Types.ObjectId, ref: "Specialist"}],
+// 	specialization: [{ type: mongoose.Types.ObjectId, ref: "Specialization"}],
 // });

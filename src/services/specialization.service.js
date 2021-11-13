@@ -1,0 +1,159 @@
+const Specialization = require('../models/specialization.model');
+
+const createSpecialization = async ({ user, createBody }) => {
+  try {
+    // authorizate adminstrator
+    if (user.role !== 'admin') {
+      throw {
+        status: 400,
+        message: 'unauthorized for people have no adminstrator role',
+      };
+    }
+    const specialization = Specialization(createBody);
+    await specialization.save();
+    
+    return;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+const addSpecializationForUser = async ({user, specializations}) => {
+  try {
+    if (user.role === 'admin') {
+      throw {
+        status: 400,
+        message: "admin doesn't have this permission",
+      };
+    }
+
+    user.specializations = [];
+    for (let specialization of specializations) {
+      const isExist = await Specialization.findOne({
+        name: specialization.name,
+      });
+
+      if (!isExist) {
+        throw {
+          status: 400,
+          message:
+            'please check again, it have one specialization is not valid',
+        };
+      }
+
+      user.specializations = [...user.specializations, specialization.name];
+    }
+
+    await user.save();
+    return;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+const getAllSpecialization = async () => {
+  try {
+    const specialization = await Specialization.find({});
+
+    return { specialization };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const updateSpecialization = async ({
+  user,
+  updateFields,
+  updateBody,
+  specializationId,
+}) => {
+  try {
+    // authorizate adminstrator
+    if (user.role !== 'admin') {
+      throw {
+        status: 400,
+        message: 'unauthorized for people have no adminstrator role',
+      };
+    }
+
+    // handler
+    const specialization = await Specialization.findById(specializationId);
+
+    if (!specialization) {
+      throw {
+        status: 404,
+        message: 'specialization not found',
+      };
+    }
+    const allowedUpdate = ['name', 'description'];
+
+    const isValidOperator = updateFields.every((update) =>
+      allowedUpdate.includes(update)
+    );
+
+    if (!isValidOperator) {
+      throw {
+        status: 400,
+        message: 'please check again, it have one field is not valid',
+      };
+    }
+
+    updateFields.forEach((update) => {
+      specialization[update] = updateBody[update];
+    });
+
+    await specialization.save();
+
+    return;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+const deleteSpecialization = async ({ user, specializationId }) => {
+  try {
+    // authorizate adminstrator
+    if (user.role !== 'admin') {
+      throw {
+        status: 400,
+        message: 'unauthorized for people have no adminstrator role',
+      };
+    }
+
+    // handler
+    const specialization = await Specialization.findByIdAndDelete(
+      specializationId
+    );
+
+    if (!specialization) {
+      throw {
+        status: 404,
+        message: 'specialization not found',
+      };
+    }
+
+    return;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+module.exports = {
+  createSpecialization,
+  addSpecializationForUser,
+  getAllSpecialization,
+  updateSpecialization,
+  deleteSpecialization,
+};

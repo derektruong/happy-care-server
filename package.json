@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node ./src/app.js",
-        "dev": "nodemon ./src/app.js -e js",
+        "start": "node ./src/bin/www.js",
+        "dev": "nodemon ./src/bin/www.js -e js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
@@ -20,10 +20,9 @@
         "mongodb": "^4.1.2",
         "mongoose": "^6.0.9",
         "multer": "^1.4.3",
-        "validator": "^13.6.0"
+        "validator": "^13.7.0"
     },
     "devDependencies": {
-        "eslint": "^7.32.0",
         "nodemon": "^2.0.13"
     }
 }
