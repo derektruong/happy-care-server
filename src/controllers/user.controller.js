@@ -1,5 +1,5 @@
 const UserService = require('../services/user.service');
-const { generateBasicResponse } = require('../helpers/api.helper');
+const { generateBasicResponse } = require('../utils/helpers/api.helper');
 
 // POST
 //#region auththentication

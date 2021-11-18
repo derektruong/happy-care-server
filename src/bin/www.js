@@ -4,7 +4,8 @@
  * Module dependencies.
  */
 
-const app = require('../app');
+const App = require('../app');
+const socketio = require('socket.io');
 const debug = require('debug')('express-training:server');
 const http = require('http');
 const logger = require('../config/logger');
@@ -15,12 +16,13 @@ require('dotenv').config();
  */
 
 const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+App.app.set('port', port);
 /**
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+const server = http.createServer(App.app);
+App.io = socketio(server);
 
 /**
  * Listen on provided port, on all network interfaces.

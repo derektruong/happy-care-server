@@ -1,5 +1,5 @@
 const SpecializationService = require('../services/specialization.service');
-const { generateBasicResponse } = require('../helpers/api.helper');
+const { generateBasicResponse } = require('../utils/helpers/api.helper');
 
 const createSpecialization = async (req, res) => {
   try {
