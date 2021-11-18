@@ -7,24 +7,24 @@ const router = new express.Router();
 
 // POST
 // authentication
-router.post('/api/users', User.createUser);
+router.post('/', User.createUser);
 
-router.post('/api/users/login', User.loginUser);
+router.post('/login', User.loginUser);
 
-router.post('/api/users/logout', auth, User.logoutUser);
+router.post('/logout', auth, User.logoutUser);
 
 // GET
 // router.get("/api/users", auth, User.getUsers);
 
-router.get('/api/users/me', auth, User.getUserInfo);
+router.get('/me', auth, User.getUserInfo);
 
-router.get('/api/users/:id', User.getUserInfoById);
+router.get('/:id', User.getUserInfoById);
 
 // PATCH
-router.patch('/api/users/me', auth, User.updateUser);
+router.patch('/me', auth, User.updateUser);
 
 // DELETE
-router.delete('/api/users/me', auth, User.deleteUser);
+router.delete('/me', auth, User.deleteUser);
 
 // * exports
 module.exports = router;
