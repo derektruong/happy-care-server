@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="./css/style-chat.css" />
+	<title>Demo</title>
+</head>
+
+<body>
+	<h1>Chat App</h1>
+
+
+
+	<div class="chat-container">
+		<form id="chat-form" action="/" onsubmit="formSubmitHandler(event)" disabled>
+			<ul>
+				<li>
+					<label id="lb-conversation-area" for="conversation-container__area">Conversation</label>
+					<div id="conversation-container">
+						<div id="conversation-container__area">
+							<div id="message"></div>
+						</div>
+						<div id="conversation-container__users">
+							<h4>Members in room</h4>
+							<div id="users"></div>
+						</div>
+					</div>
+
+				</li>
+				<li>
+					<label id="lb-message" for="message">Message</label>
+					<input name="message" id="txf-message" type="text" placeholder="Input message here ..." required />
+				</li>
+				<li class="btn">
+					<input id="send-btn" type="submit" value="Send" />
+					<input id="send-location-btn" type="button" value="Send location" />
+				</li>
+			</ul>
+		</form>
+	</div>
+
+	<script id="message-template" type="text/html">
+      <div>
+        <div id="user__info">
+          	<p>
+			  <span id="username">{{username}}</span>
+			  <span id="message-time">{{createdAt}}</span>
+			</p>
+        </div>
+		<div>
+			<p id="user__meta">{{ message }}</p>
+		</div>
+        
+      </div>
+    </script>
+
+	<script id="location-template" type="text/html">
+      <div>
+		<div id="user__info">
+			<p>
+			<span id="username">{{username}}</span>
+			<span id="message-time">{{createdAt}}</span>
+		  </p>
+	  	</div>
+		  	<div>
+				  <p id="user__meta">
+					  <a href={{ url }} target="_blank">My location</a>
+				  </p>
+			</div>
+        
+      </div>
+    </script>
+
+	<script id="room-users-template" type="text/html">
+		<div id="users__username">
+			<p>🙋‍♂️{{username}}</p>
+		</div>
+	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="./js/chat.js"></script>
+</body>
+
+</html>

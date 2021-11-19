@@ -6,6 +6,7 @@
 
 const App = require('../app');
 const socketio = require('socket.io');
+const WebSocket = require('../utils/web-socket');
 const debug = require('debug')('express-training:server');
 const http = require('http');
 const logger = require('../config/logger');
@@ -23,6 +24,12 @@ App.app.set('port', port);
 
 const server = http.createServer(App.app);
 App.io = socketio(server);
+
+/**
+ * Create event on socket.io
+ */
+const client = new WebSocket();
+client.connection(App.io);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+    background-color: rgb(34, 35, 56);
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-container {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+}
+
+h4 {
+    margin: 5px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+}
+
+ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+li {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+p {
+    margin: 0;
+}
+
+label {
+    display: block;
+    min-width: 150px;
+}
+
+label,
+input {
+    margin-right: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+}
+
+li:nth-child(2) {
+    margin-top: 20px;
+}
+
+.btn {
+    display: flex;
+    flex-direction: row;
+
+
+}
+
+.btn>input {
+    background-color: rgb(243, 245, 163);
+    margin: 20px;
+    padding: 5px;
+
+    border: 0;
+    border-radius: 7px;
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+}
+
+.btn>input:hover {
+    background-color: rgb(0, 164, 185);
+    cursor: pointer;
+}
+
+div#conversation-container {
+    display: flex;
+    flex-direction: row;
+}
+
+div#conversation-container__area {
+    background-color: rgb(38, 39, 56);
+    width: 400px;
+    height: 500px;
+    
+    border: 1px solid rgb(143, 143, 143);
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+}
+
+div#message {
+    height: 100%;
+    overflow: scroll;
+}
+
+div#message>div {
+    margin: 0 10px 10px 5px;
+}
+
+
+div#conversation-container__users{
+    background-color: rgb(49, 49, 59);
+    position: relative;
+    width: 200px;
+    height: 500px;
+
+    border: 1px solid rgb(143, 143, 143);
+    overflow: scroll;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+}
+
+input#txf-message {
+    width: 400px;
+}
+
+#send-btn {
+    margin-left: 150px;
+}
+
+div#user__info {
+	margin-bottom: 5px;
+}
+
+span#username {
+	font-weight: 600;
+}
+
+span#message-time {
+	color:rgb(138, 138, 138);
+	font-size: 12px;
+}
+
+p#user__meta {
+	background-color: rgb(0, 127, 211);
+	color:rgb(255, 255, 255);
+
+	width: fit-content !important;
+	margin: 0 1rem;
+	padding: 0 0.5rem 0 0.5rem;
+
+	border-radius: 10px; 
+}
+
+p#users__username {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+a {
+	text-decoration: none;
+	color: rgb(208, 255, 177);
+}

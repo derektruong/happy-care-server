@@ -89,7 +89,7 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
       avatar: {
-        type: Buffer,
+        type: String,
       },
     },
     specializations: [{ type: String }],

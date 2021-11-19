@@ -34,11 +34,6 @@ const auth = async (req, res, next) => {
     res.user = user;
     res.token = token;
 
-    // init websocket for user
-    io.on('connection', (socket) => {
-      res.socket = socket;
-    });
-
     next();
   } catch (error) {
     if (error.message === 'jwt expired') {
