@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const env = require('../config/env');
-const { io } = require('../app');
 
 // Check if token valid and expired
 const expiredTokenHandle = async (res, token) => {

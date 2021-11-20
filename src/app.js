@@ -6,7 +6,6 @@ const logger = require('./config/logger');
 const initRoutes = require('./routes');
 
 const app = express();
-const io = null;
 
 // automatically pass incoming json to an object so we can access it in our request.
 app.use(express.json());
@@ -24,7 +23,4 @@ try {
   logger.Error(error.message);
 }
 
-module.exports = {
-  app,
-  io,
-};
+module.exports = app;

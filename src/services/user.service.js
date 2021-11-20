@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+const logger = require('../config/logger');
 const User = require('../models/user.model');
 
 const createUser = async ({ userFields }) => {
@@ -88,10 +90,29 @@ const updateUser = async ({ user, updateFields, updateBody }) => {
   }
 };
 
+const verifyUserRole = (token) => {
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+  if (data) {
+    return { 
+      userId: data._id, 
+      userRole: data.role
+    };
+  } else {
+    return null;
+  }
+  } catch (error) {
+    logger.Error(error.message);
+    return null;
+  }
+  
+}
+
 module.exports = {
   createUser,
   loginUser,
   logoutUser,
   getUserInfoById,
   updateUser,
+  verifyUserRole,
 };
