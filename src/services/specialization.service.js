@@ -57,11 +57,11 @@ const addSpecializationForUser = async ({user, specializations}) => {
   }
 };
 
-const getAllSpecialization = async () => {
+const getAllSpecializations = async () => {
   try {
-    const specialization = await Specialization.find({});
+    const specializations = await Specialization.find({});
 
-    return { specialization };
+    return { specializations };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -153,7 +153,7 @@ const deleteSpecialization = async ({ user, specializationId }) => {
 module.exports = {
   createSpecialization,
   addSpecializationForUser,
-  getAllSpecialization,
+  getAllSpecializations,
   updateSpecialization,
   deleteSpecialization,
 };

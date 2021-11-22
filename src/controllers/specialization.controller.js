@@ -45,9 +45,9 @@ const addSpecializationForUser = async (req, res) => {
   }
 };
 
-const getAllSpecialization = async (req, res) => {
+const getAllSpecializations = async (req, res) => {
   try {
-    const rs = await SpecializationService.getAllSpecialization();
+    const rs = await SpecializationService.getAllSpecializations();
 
     res.json({
       ...generateBasicResponse(
@@ -119,7 +119,7 @@ const deleteSpecialization = async (req, res) => {
 module.exports = {
   createSpecialization,
   addSpecializationForUser,
-  getAllSpecialization,
+  getAllSpecializations,
   getSpecializationOfUser,
   updateSpecialization,
   deleteSpecialization,

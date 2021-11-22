@@ -1,6 +1,7 @@
 const logger = require('../../config/logger');
 const { ROOM_NAME } = require('../../config/constants');
 const UserService = require('../../services/user.service');
+const SpecializationService = require('../../services/specialization.service');
 
 class AppSocket {
   constructor() {
@@ -8,6 +9,7 @@ class AppSocket {
     this.doctors = [];
     this.members = [];
     this.userService = UserService;
+    this.specializationService = SpecializationService;
   }
 
   userJoinRoomHandler(socket) {
@@ -76,24 +78,27 @@ class AppSocket {
     });
   }
 
-  addUser({ socket, userId, userRole }) {
+  async addUser({ socket, userId, userRole }) {
     const isExistUser = this.users.find((user) => user.userId === userId);
 
-    if (!isExistUser) {
-      if (userRole === 'doctor') {
-        this.users.push({ id: socket.id, userId });
-        this.doctors.push({ id: socket.id, userId });
-        socket.join(ROOM_NAME.doctorRoom);
-      } else if (userRole === 'member') {
-        this.users.push({ id: socket.id, userId });
-        this.members.push({ id: socket.id, userId });
-        socket.join(ROOM_NAME.memberRoom);
-      }
+    if (isExistUser) return 'user cannot join the app';
 
-      return `${userRole} join the app successfully`;
+    if (userRole === 'doctor') {
+      this.users.push({ id: socket.id, userId });
+      this.doctors.push({ id: socket.id, userId });
+      socket.join(ROOM_NAME.doctorRoom);
+
+      const specializations = await getAllSpecializations();
+      const specializationNames = specializations.map((spec) => spec.name);
+      console.log(specializationNames);
+
+    } else if (userRole === 'member') {
+      this.users.push({ id: socket.id, userId });
+      this.members.push({ id: socket.id, userId });
+      socket.join(ROOM_NAME.memberRoom);
     }
 
-    return 'user cannot join the app';
+    return `${userRole} join the app successfully`;
   }
 
   removeUser({ socketId }) {
@@ -111,3 +116,8 @@ class AppSocket {
 }
 
 module.exports = new AppSocket();
+
+const getAllSpecializations = async () => {
+  const specializations = await SpecializationService.getAllSpecializations();
+  return specializations.specializations;
+}

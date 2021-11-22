@@ -10,7 +10,7 @@ router.post('/admin/specialization', auth, Specialization.createSpecialization);
 router.post('/users/me/specialization', auth, Specialization.addSpecializationForUser);
 
 // GET
-router.get('/admin/specialization', Specialization.getAllSpecialization);
+router.get('/admin/specialization', Specialization.getAllSpecializations);
 
 router.get('/users/me/specialization', auth, Specialization.getSpecializationOfUser);
 
