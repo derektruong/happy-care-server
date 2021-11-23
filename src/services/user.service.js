@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const User = require('../models/user.model');
+const Specialization = require('../models/specialization.model');
 
 const createUser = async ({ userFields }) => {
   try {
@@ -56,7 +57,7 @@ const getUserInfoById = async ({ userId }) => {
 
 const updateUser = async ({ user, updateFields, updateBody }) => {
   try {
-    const allowedUpdate = ['email', 'password', 'profile', 'background'];
+    const allowedUpdate = ['email', 'password', 'profile', 'background', 'specializations'];
 
     let isValidOperator = updateFields.every((update) =>
       allowedUpdate.includes(update)
@@ -96,7 +97,7 @@ const verifyUserRole = (token) => {
   if (data) {
     return { 
       userId: data._id, 
-      userRole: data.role
+      userRole: data.role,
     };
   } else {
     return null;
@@ -108,6 +109,22 @@ const verifyUserRole = (token) => {
   
 }
 
+const getAllSpecializationsByUserId = async ({ userId }) => {
+  try {
+    const user = await User.findById(userId);
+    const userSpecs =  user.specializations;
+
+    const userSpecIds = await Promise.all(userSpecs.map(async (userSpec) => {
+      const spec = await Specialization.findOne({ name: userSpec });
+      return spec._id.toString();
+    }));
+
+    return userSpecIds;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -115,4 +132,5 @@ module.exports = {
   getUserInfoById,
   updateUser,
   verifyUserRole,
+  getAllSpecializationsByUserId,
 };

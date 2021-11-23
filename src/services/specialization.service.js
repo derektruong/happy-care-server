@@ -150,10 +150,23 @@ const deleteSpecialization = async ({ user, specializationId }) => {
   }
 };
 
+// custome function
+const getAllSpecializationIds = async () => {
+  const { specializations } = await getAllSpecializations();
+  return specializations.map((spec) => spec._id.toString());
+}
+
+const getSpecNameById = async ({ specId }) => {
+  const { specializations } = await Specialization.findById(specId);
+  return specializations.map((spec) => spec.name);
+}
+
 module.exports = {
   createSpecialization,
   addSpecializationForUser,
   getAllSpecializations,
   updateSpecialization,
   deleteSpecialization,
+  getAllSpecializationIds,
+  getSpecNameById,
 };

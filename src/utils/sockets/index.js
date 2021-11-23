@@ -18,6 +18,9 @@ class WebSockets {
       // handle on 'get-number-of-[users | doctors | members]'
       this.appSocket.getNumberOfUsersHandler(socket);
 
+      // handle on 'get rooms in current socket io'
+      this.appSocket.getSocketRooms(io, socket);
+
       // handle on 'disconnect' event
       this.appSocket.disconnectHandler(socket);
     });

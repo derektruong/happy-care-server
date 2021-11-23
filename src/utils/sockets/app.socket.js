@@ -71,6 +71,13 @@ class AppSocket {
     });
   }
 
+  getSocketRooms(io, socket) {
+    socket.on('get-socket-rooms', (message, callback) => {
+      logger.Info(`get-socket-rooms: ${message}`);
+      callback({ rooms: io.sockets.adapter.rooms });
+    })
+  }
+
   disconnectHandler(socket) {
     socket.on('disconnect', () => {
       this.removeUser({ socketId: socket.id });
@@ -80,18 +87,25 @@ class AppSocket {
 
   async addUser({ socket, userId, userRole }) {
     const isExistUser = this.users.find((user) => user.userId === userId);
-
     if (isExistUser) return 'user cannot join the app';
+    socket.join(ROOM_NAME.userRoom);
 
     if (userRole === 'doctor') {
       this.users.push({ id: socket.id, userId });
       this.doctors.push({ id: socket.id, userId });
       socket.join(ROOM_NAME.doctorRoom);
+      
+      // handle doctor after join app can also join their specialization room
+      const specIds = await this.specializationService.getAllSpecializationIds();
+      const userSpecIds= await this.userService.getAllSpecializationsByUserId({ userId });
+      const doctorSpecRooms = await doctorJoinInSpecRooms({ socket, specIds, userSpecIds });
 
-      const specializations = await getAllSpecializations();
-      const specializationNames = specializations.map((spec) => spec.name);
-      console.log(specializationNames);
-
+      if (doctorSpecRooms.length === 0) {
+        logger.Info(`doctor with id ${userId} doesn't join any spec rooms`);
+      } else {
+        logger.Info(`doctor with id ${userId} joined in ${doctorSpecRooms.length} spec rooms`);
+      }
+      
     } else if (userRole === 'member') {
       this.users.push({ id: socket.id, userId });
       this.members.push({ id: socket.id, userId });
@@ -117,7 +131,12 @@ class AppSocket {
 
 module.exports = new AppSocket();
 
-const getAllSpecializations = async () => {
-  const specializations = await SpecializationService.getAllSpecializations();
-  return specializations.specializations;
+const doctorJoinInSpecRooms = async ({ socket, specIds, userSpecIds }) => {
+  const filterSpecIds = specIds.filter((specId) => userSpecIds.includes(specId));
+  if (filterSpecIds.length > 0) {
+    filterSpecIds.forEach((specId) => {
+      socket.join(specId);
+    });
+  }
+  return filterSpecIds;
 }

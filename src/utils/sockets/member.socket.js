@@ -1,7 +1,10 @@
 class MemberSocket {
-	constructor(socket) {
-		this.socket = socket;
-	}
+	// constructor(socket) {
+	// }
 
-	
+	broadcastSpecToRooms(socket) {
+		socket.on('broadcast-spec-to-doctor', (specId, callback) => {
+			
+		});
+	}
 }
