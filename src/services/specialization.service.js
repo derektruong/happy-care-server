@@ -161,6 +161,11 @@ const getSpecNameById = async ({ specId }) => {
   return specializations.map((spec) => spec.name);
 }
 
+const getSpecIdByName = async ({ specName }) => {
+  const { specializations } = await Specialization.findOne({ name: specName });
+  return specializations.map((spec) => spec._id.toString());
+}
+
 module.exports = {
   createSpecialization,
   addSpecializationForUser,
@@ -169,4 +174,5 @@ module.exports = {
   deleteSpecialization,
   getAllSpecializationIds,
   getSpecNameById,
+  getSpecIdByName,
 };
