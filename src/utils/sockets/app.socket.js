@@ -13,12 +13,12 @@ class AppSocket {
   }
 
   userJoinRoomHandler(socket) {
-    socket.on('join', (token, callback) => {
+    socket.on('join', async (token, callback) => {
       const rs = this.userService.verifyUserRole(token);
       if (rs) {
         const { userId, userRole } = rs;
         logger.Info(`${userRole} with id ${userId}`);
-        callback(this.addUser({ socket, userId, userRole }));
+        callback(await this.addUser({ socket, userId, userRole }));
       } else {
         callback('user is not valid');
       }
@@ -105,7 +105,6 @@ class AppSocket {
       } else {
         logger.Info(`doctor with id ${userId} joined in ${doctorSpecRooms.length} spec rooms`);
       }
-      
     } else if (userRole === 'member') {
       this.users.push({ id: socket.id, userId });
       this.members.push({ id: socket.id, userId });

@@ -8,7 +8,9 @@ class MemberSocket {
 	broadcastSpecToRooms(socket) {
 		socket.on('broadcast-spec-to-doctor', (specName, callback) => {
 			const specId = this.specializationService.getSpecIdByName({ specName });
-			socket.broadcast.to(specId).emit('broadcast-spec-to-doctor', specName);
+
+			socket.broadcast.to(specId).emit('receive-spec-to-doctor', specName);
+			callback(`the invitation has been sent to the doctor with ${specName} room`);
 		});
 	}
 }
