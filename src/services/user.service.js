@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const User = require('../models/user.model');
 const Specialization = require('../models/specialization.model');
+const SpecializationService = require('../services/specialization.service');
 
 const createUser = async ({ userFields }) => {
   try {
@@ -125,6 +126,25 @@ const getAllSpecializationsByUserId = async ({ userId }) => {
   }
 }
 
+const getDoctors = async ({ specId }) => {
+  try {
+    let options = { role: 'doctor' };
+    if (specId) {
+      console.log(specId);
+      const specName = await SpecializationService.getSpecNameById({ specId });
+      options = {
+        ...options,
+        specializations: specName,
+      };
+    }
+    const userData = await User.find(options);
+
+    return userData;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -133,4 +153,5 @@ module.exports = {
   updateUser,
   verifyUserRole,
   getAllSpecializationsByUserId,
+  getDoctors,
 };

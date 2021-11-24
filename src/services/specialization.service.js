@@ -1,4 +1,5 @@
 const Specialization = require('../models/specialization.model');
+const ObjectId = require('mongodb').ObjectID;
 
 const createSpecialization = async ({ user, createBody }) => {
   try {
@@ -157,8 +158,8 @@ const getAllSpecializationIds = async () => {
 }
 
 const getSpecNameById = async ({ specId }) => {
-  const { specializations } = await Specialization.findById(specId);
-  return specializations.map((spec) => spec.name);
+  const specializations = await Specialization.findById(specId);
+  return specializations.name;
 }
 
 const getSpecIdByName = async ({ specName }) => {

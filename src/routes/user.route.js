@@ -14,7 +14,7 @@ router.post('/login', User.loginUser);
 router.post('/logout', auth, User.logoutUser);
 
 // GET
-// router.get("/api/users", auth, User.getUsers);
+router.get('/get-doctors', auth, User.getDoctors);
 
 router.get('/me', auth, User.getUserInfo);
 

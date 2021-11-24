@@ -45,6 +45,20 @@ const logoutUser = async (req, res) => {
 //#endregion
 
 // GET
+const getDoctors = async (req, res) => {
+  try {
+    const { specId } = req.query;
+    const rs = await UserService.getDoctors({ specId });
+
+    res.json({
+      ...generateBasicResponse(true, false, 'get doctors successfully'),
+      data: { doctors: rs },
+    });
+  } catch (error) {
+    res.status(500).json(generateBasicResponse(false, true, error.message));
+  }
+}
+
 const getUserInfo = async (req, res) => {
   try {
     res.json({
@@ -114,4 +128,5 @@ module.exports = {
   getUserInfoById,
   updateUser,
   deleteUser,
+  getDoctors,
 };
