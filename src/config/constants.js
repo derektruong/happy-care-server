@@ -4,6 +4,13 @@ const ROOM_NAME = {
 	memberRoom: 'members room',
 }
 
+const USER_STATUS = {
+	online: 'online',
+	offline: 'offline',
+	busy: 'busy',
+};
+
 module.exports = {
 	ROOM_NAME,
+	USER_STATUS,
 }

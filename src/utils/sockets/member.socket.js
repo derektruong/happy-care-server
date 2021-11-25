@@ -5,12 +5,16 @@ class MemberSocket {
 		this.specializationService = SpecializationService;
 	}
 
-	broadcastSpecToRooms(socket) {
-		socket.on('broadcast-spec-to-doctor', (specName, callback) => {
-			const specId = this.specializationService.getSpecIdByName({ specName });
+	getDoctorsFromSpecRoom(socket, specRooms) {
+		socket.on('get-doctor-from-spec-room', (specId, callback) => {
+			if (!(specId in specRooms)) {
+				callback(`there have no doctors in this specialization online`);
+			}
 
-			socket.broadcast.to(specId).emit('receive-spec-to-doctor', specName);
-			callback(`the invitation has been sent to the doctor with ${specName} room`);
+			const doctors = specRooms.specId;
+			callback(doctors);
 		});
 	}
 }
+
+module.exports = new MemberSocket();

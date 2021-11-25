@@ -1,14 +1,17 @@
 const logger = require('../../config/logger');
 const AppSocket = require('./app.socket');
+const MemberSocket = require('./member.socket');
 
 class WebSockets {
   constructor() {
     this.appSocket = AppSocket;
+    this.memberSocket = MemberSocket;
   }
   connection(io) {
     io.on('connection', (socket) => {
       logger.Info('a new user connected');
 
+      //#region APP SOCKET
       // handle on 'join' event after user login
       this.appSocket.userJoinRoomHandler(socket);
 
@@ -23,6 +26,11 @@ class WebSockets {
 
       // handle on 'disconnect' event
       this.appSocket.disconnectHandler(socket);
+      //#endregion
+
+      //#region MEMBER SOCKET
+      // handle on 'join' event after user login
+      //#endregion
     });
   }
 }

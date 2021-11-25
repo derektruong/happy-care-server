@@ -1,5 +1,5 @@
 const logger = require('../../config/logger');
-const { ROOM_NAME } = require('../../config/constants');
+const { ROOM_NAME, USER_STATUS } = require('../../config/constants');
 const UserService = require('../../services/user.service');
 const SpecializationService = require('../../services/specialization.service');
 
@@ -8,6 +8,7 @@ class AppSocket {
     this.users = [];
     this.doctors = [];
     this.members = [];
+    this.specRooms = {};
     this.userService = UserService;
     this.specializationService = SpecializationService;
   }
@@ -88,17 +89,25 @@ class AppSocket {
   async addUser({ socket, userId, userRole }) {
     const isExistUser = this.users.find((user) => user.userId === userId);
     if (isExistUser) return 'user cannot join the app';
+    this.users.push({ 
+      id: socket.id, 
+      userId,
+      status: USER_STATUS.online,
+    });
     socket.join(ROOM_NAME.userRoom);
 
     if (userRole === 'doctor') {
-      this.users.push({ id: socket.id, userId });
-      this.doctors.push({ id: socket.id, userId });
+      this.doctors.push({ 
+        id: socket.id, 
+        userId,
+        status: USER_STATUS.online,
+      });
       socket.join(ROOM_NAME.doctorRoom);
       
       // handle doctor after join app can also join their specialization room
       const specIds = await this.specializationService.getAllSpecializationIds();
       const userSpecIds= await this.userService.getAllSpecializationsByUserId({ userId });
-      const doctorSpecRooms = await doctorJoinInSpecRooms({ socket, specIds, userSpecIds });
+      const doctorSpecRooms = await this.doctorJoinInSpecRooms({ socket, specIds, userSpecIds, userId });
 
       if (doctorSpecRooms.length === 0) {
         logger.Info(`doctor with id ${userId} doesn't join any spec rooms`);
@@ -106,8 +115,11 @@ class AppSocket {
         logger.Info(`doctor with id ${userId} joined in ${doctorSpecRooms.length} spec rooms`);
       }
     } else if (userRole === 'member') {
-      this.users.push({ id: socket.id, userId });
-      this.members.push({ id: socket.id, userId });
+      this.members.push({ 
+        id: socket.id, 
+        userId,
+        status: USER_STATUS.online,
+      });
       socket.join(ROOM_NAME.memberRoom);
     }
 
@@ -121,21 +133,41 @@ class AppSocket {
 
       if (user.userRole === 'doctor') {
         this.doctors = this.doctors.filter((user) => user.id !== socketId);
+
+        // remove doctor from spec room
+        const specIds = Object.keys(this.specRooms);
+        specIds.forEach((specId) => {
+          this.specRooms[specId] = this.specRooms[specId].filter((user) => user.id !== socketId);
+          if (this.specRooms[specId].length === 0) {
+            delete this.specRooms[specId];
+          }
+        });
+
       } else if (user.userRole === 'member') {
         this.members = this.members.filter((user) => user.id !== socketId);
       }
     }
   }
+
+  async doctorJoinInSpecRooms({ socket, specIds, userSpecIds, userId }) {
+    const filterSpecIds = specIds.filter((specId) => userSpecIds.includes(specId));
+    if (filterSpecIds.length > 0) {
+      filterSpecIds.forEach((specId) => {
+        if (!(specId in this.specRooms)) {
+          this.specRooms[specId] = [];
+          this.specRooms[specId].push({
+            userId,
+            status: USER_STATUS.online,
+            id: socket.id,
+          });
+        }
+        socket.join(specId);
+      });
+    }
+    return filterSpecIds;
+  }
 }
+
 
 module.exports = new AppSocket();
 
-const doctorJoinInSpecRooms = async ({ socket, specIds, userSpecIds }) => {
-  const filterSpecIds = specIds.filter((specId) => userSpecIds.includes(specId));
-  if (filterSpecIds.length > 0) {
-    filterSpecIds.forEach((specId) => {
-      socket.join(specId);
-    });
-  }
-  return filterSpecIds;
-}
