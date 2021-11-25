@@ -30,6 +30,7 @@ class WebSockets {
 
       //#region MEMBER SOCKET
       // handle on 'join' event after user login
+      this.memberSocket.getDoctorsFromSpecRoom(socket, this.appSocket.specRooms);
       //#endregion
     });
   }
