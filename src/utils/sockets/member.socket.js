@@ -15,6 +15,8 @@ class MemberSocket {
 			callback(doctors);
 		});
 	}
+
+	
 }
 
 module.exports = new MemberSocket();

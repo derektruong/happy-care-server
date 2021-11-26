@@ -130,7 +130,6 @@ const getDoctors = async ({ specId }) => {
   try {
     let options = { role: 'doctor' };
     if (specId) {
-      console.log(specId);
       const specName = await SpecializationService.getSpecNameById({ specId });
       options = {
         ...options,
