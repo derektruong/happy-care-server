@@ -7,6 +7,10 @@ const roomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    literalName: {
+      type: String,
+      required: true,
+    },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,

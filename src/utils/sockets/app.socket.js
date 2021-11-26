@@ -5,12 +5,10 @@ const SpecializationService = require('../../services/specialization.service');
 
 class AppSocket {
   constructor() {
-    this.users = [];
-    this.doctors = [];
-    this.members = [];
-    this.specRooms = {};
     this.userService = UserService;
     this.specializationService = SpecializationService;
+    this.users = [];
+    this.specRooms = {};
   }
 
   userJoinRoomHandler(socket) {
@@ -38,8 +36,9 @@ class AppSocket {
 
     socket.on('get-doctors-in-app', (message, callback) => {
       logger.Info(`get-doctors-in-app: ${message}`);
-      if (this.doctors.length > 0) {
-        callback({ doctors: this.doctors });
+      const doctors = this.users.filter((user) => user.userRole === 'doctor');
+      if (doctors.length > 0) {
+        callback({ doctors });
       } else {
         callback('cannot found any doctors');
       }
@@ -47,8 +46,9 @@ class AppSocket {
 
     socket.on('get-members-in-app', (message, callback) => {
       logger.Info(`get-members-in-app: ${message}`);
-      if (this.members.length > 0) {
-        callback({ members: this.members });
+      const members = this.users.filter((user) => user.userRole === 'member');
+      if (members.length > 0) {
+        callback({ members });
       } else {
         callback('cannot found any members');
       }
@@ -63,12 +63,14 @@ class AppSocket {
 
     socket.on('get-number-of-doctors', (message, callback) => {
       logger.Info(`get-number-of-doctors: ${message}`);
-      callback({ numberOfDoctors: this.doctors.length });
+      const doctors = this.users.filter((user) => user.userRole === 'doctor');
+      callback({ numberOfDoctors: doctors.length });
     });
 
     socket.on('get-number-of-members', (message, callback) => {
       logger.Info(`get-number-of-members: ${message}`);
-      callback({ numberOfMembers: this.members.length });
+      const members = this.users.filter((user) => user.userRole === 'member');
+      callback({ numberOfMembers: members.length });
     });
   }
 
@@ -92,18 +94,12 @@ class AppSocket {
     this.users.push({ 
       id: socket.id, 
       userId,
+      userRole,
       status: USER_STATUS.online,
     });
     socket.join(ROOM_NAME.userRoom);
 
     if (userRole === 'doctor') {
-      this.doctors.push({ 
-        id: socket.id, 
-        userId,
-        status: USER_STATUS.online,
-      });
-      socket.join(ROOM_NAME.doctorRoom);
-      
       // handle doctor after join app can also join their specialization room
       const specIds = await this.specializationService.getAllSpecializationIds();
       const userSpecIds= await this.userService.getAllSpecializationsByUserId({ userId });
@@ -114,15 +110,7 @@ class AppSocket {
       } else {
         logger.Info(`doctor with id ${userId} joined in ${doctorSpecRooms.length} spec rooms`);
       }
-    } else if (userRole === 'member') {
-      this.members.push({ 
-        id: socket.id, 
-        userId,
-        status: USER_STATUS.online,
-      });
-      socket.join(ROOM_NAME.memberRoom);
     }
-
     return `${userRole} join the app successfully`;
   }
 
@@ -132,8 +120,6 @@ class AppSocket {
       this.users = this.users.filter((user) => user.id !== socketId);
 
       if (user.userRole === 'doctor') {
-        this.doctors = this.doctors.filter((user) => user.id !== socketId);
-
         // remove doctor from spec room
         const specIds = Object.keys(this.specRooms);
         specIds.forEach((specId) => {
@@ -142,10 +128,7 @@ class AppSocket {
             delete this.specRooms[specId];
           }
         });
-
-      } else if (user.userRole === 'member') {
-        this.members = this.members.filter((user) => user.id !== socketId);
-      }
+      } 
     }
   }
 
