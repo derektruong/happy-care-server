@@ -24,3 +24,7 @@ const verifyRoom = async ({ literalName, memberId, doctorId }) => {
 	return ERROR_MESSAGE.cannotVerifyRoom;
   }
 };
+
+module.exports = {
+	verifyRoom,
+};
