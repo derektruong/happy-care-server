@@ -1,6 +1,7 @@
 const logger = require('../config/logger');
 const { ERROR_MESSAGE } = require('../config/constants');
 const RoomModel = require('../models/room.model');
+const MessageModel = require('../models/message.model');
 const UserModel = require('../models/user.model');
 
 const verifyRoom = async ({ memberId, doctorId }) => {
@@ -36,18 +37,28 @@ const getMyRooms = async (userId) => {
       .populate('members', '_id profile.fullname')
       .lean();
 
-    rooms.forEach((room) => {
+    await Promise.all(rooms.map(async (room) => {
       if (room.readBy.includes(userId)) {
         room.isRead = true;
       } else {
         room.isRead = false;
       }
+
+      const messages = await MessageModel.findOne({ roomId: room._id });
+      console.log(messages);
+      if (messages) {
+        room.haveMessage = true;
+      } else {
+        room.haveMessage = false;
+      }
+
       delete room.readBy;
       delete room.literalName;
       delete room.__v;
       delete room.updatedAt;
       delete room.createdAt;
-    });
+    }));
+
     return rooms;
   } catch (error) {
     throw new Error(error.message);
@@ -59,6 +70,7 @@ const getMembersFromRoom = async (roomId) => {
     const room = await RoomModel.findOne({ _id: roomId })
       .populate('members', '_id profile.fullname')
       .lean();
+    console.log(room.members);
     return room.members;
   } catch (error) {
     throw new Error(error.message);

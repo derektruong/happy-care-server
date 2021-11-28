@@ -32,6 +32,15 @@ class MemberSocket {
         // find user in users room
         const user = userRoom.find((user) => user.userId === userId);
         user.status = USER_STATUS.busy;
+
+        // notify to doctor
+        // const members = this.roomService.getMembersFromRoom(roomId);
+
+        // members.forEach((member) => {
+        //   if (member.userId !== userId) {
+        //     member.socket.emit('new-user-join-room', user);
+        //   }
+        // });
       
         callback(`joined room ${roomId}`);
       } catch (error) {

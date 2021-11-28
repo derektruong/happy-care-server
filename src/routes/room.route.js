@@ -4,9 +4,14 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET
+// POST
 router.post('/verify-room', auth, RoomController.verifyRoom);
+
+// GET
 router.get('/me', auth, RoomController.getMyRooms);
+
 router.get('/:id/members', auth, RoomController.getMembersFromRoom);
+
+// PATCH
 
 module.exports = router;
