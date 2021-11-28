@@ -1,11 +1,11 @@
 const logger = require('../../config/logger');
 const AppSocket = require('./app.socket');
-const MemberSocket = require('./member.socket');
+const UserSocket = require('./user.socket');
 
 class WebSockets {
   constructor() {
     this.appSocket = AppSocket;
-    this.memberSocket = MemberSocket;
+    this.userSocket = UserSocket;
   }
   connection(io) {
     io.on('connection', (socket) => {
@@ -30,7 +30,13 @@ class WebSockets {
 
       //#region MEMBER SOCKET
       // handle on 'join' event after user login
-      this.memberSocket.getDoctorsFromSpecRoom(socket, this.appSocket.specRooms);
+      this.userSocket.getDoctorsFromSpecRoom(socket, this.appSocket.specRooms);
+
+      // handle on 'open chat room with doctor'
+      this.userSocket.openChatRoom(socket, this.appSocket.users);
+
+      // handle on 'leave room' when user leave room
+      this.userSocket.leaveChatRoom(socket);
       //#endregion
     });
   }

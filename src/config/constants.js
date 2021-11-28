@@ -8,12 +8,18 @@ const USER_STATUS = {
 	busy: 'busy',
 };
 
+const USER_MESSAGES = { 
+	doctorBusy: 'doctor is busy',
+}
+
 const ERROR_MESSAGE = {
-	cannotVerifyRoom: 'Cannot verify room',
+	cannotVerifyRoom: 'cannot verify room',
+	userNotFound: 'user not found',
 };
 
 module.exports = {
 	ROOM_NAME,
 	USER_STATUS,
+	USER_MESSAGES,
 	ERROR_MESSAGE,
 }

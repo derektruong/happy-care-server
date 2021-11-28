@@ -10,8 +10,15 @@ const roomSchema = new mongoose.Schema(
     literalName: {
       type: String,
       required: true,
+      immutable: true,
     },
     members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    readBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -21,5 +28,19 @@ const roomSchema = new mongoose.Schema(
   options
 );
 
-const Room = mongoose.model('Message', roomSchema);
+// * toJSON
+roomSchema.methods.toJSON = function () {
+  const room = this;
+  const roomObject = room.toObject();
+
+  delete roomObject.readBy;
+  delete roomObject.literalName;
+  delete roomObject.__v;
+  delete roomObject.updatedAt;
+  delete roomObject.createdAt;
+
+  return roomObject;
+};
+
+const Room = mongoose.model('Room', roomSchema);
 module.exports = Room;

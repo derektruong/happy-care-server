@@ -98,6 +98,7 @@ class AppSocket {
       status: USER_STATUS.online,
     });
     socket.join(ROOM_NAME.userRoom);
+    socket.join(userId);
 
     if (userRole === 'doctor') {
       // handle doctor after join app can also join their specialization room
