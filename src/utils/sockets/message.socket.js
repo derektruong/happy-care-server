@@ -12,7 +12,7 @@ class MessageSocket {
 	socket.on('send-message', async (data, callback) => {
 	  try {
 		const { message, roomId, userId } = data;
-		const newMessage = await this.messageService.saveMessage({ message, roomId, userId });
+		const newMessage = await this.messageService.saveMessage({ messageContent: message, roomId, userId });
 		socket.broadcast.to(roomId).emit('receive-message', { message, user: newMessage.user, time: newMessage.time }, function (ackData) {
 		  logger.Info(ackData);
 		});

@@ -39,7 +39,7 @@ class MemberSocket {
           this.chatRooms[roomId] = [];
           this.chatRooms[roomId].push(user);
         } else {
-          room.push(user);
+          this.chatRooms[roomId].push(user);
         }
 
         callback(`joined room ${roomId}`);
