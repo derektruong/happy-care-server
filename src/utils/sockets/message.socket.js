@@ -13,9 +13,7 @@ class MessageSocket {
 	  try {
 		const { message, roomId, userId } = data;
 		const newMessage = await this.messageService.saveMessage({ messageContent: message, roomId, userId });
-		socket.broadcast.to(roomId).emit('receive-message', { message, user: newMessage.user, time: newMessage.time }, function (ackData) {
-		  logger.Info(ackData);
-		});
+		socket.broadcast.to(roomId).emit('receive-message', { message, user: newMessage.user, time: newMessage.time });
 		callback(generateBasicCallback(true, false, 'message was sent successfully'));
 	  } catch (error) {
 		callback(generateBasicCallback(false, true, error.message));
