@@ -45,7 +45,6 @@ const getMyRooms = async (userId) => {
       }
 
       const messages = await MessageModel.findOne({ roomId: room._id });
-      console.log(messages);
       if (messages) {
         room.haveMessage = true;
       } else {
@@ -70,7 +69,6 @@ const getMembersFromRoom = async (roomId) => {
     const room = await RoomModel.findOne({ _id: roomId })
       .populate('members', '_id profile.fullname')
       .lean();
-    console.log(room.members);
     return room.members;
   } catch (error) {
     throw new Error(error.message);

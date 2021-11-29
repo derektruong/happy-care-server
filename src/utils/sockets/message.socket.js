@@ -1,20 +1,27 @@
 const { ERROR_MESSAGE } = require('../../config/constants');
-const MessageService = require('../../services/');
+const { generateBasicCallback } = require('../helpers/socket.helper');
+const logger = require('../../config/logger');
+const MessageService = require('../../services/message.service');
 
 class MessageSocket {
   constructor() {
-    this.messageService = new MessageService();
+    this.messageService = MessageService;
   }
 
   async sendMessage(socket) {
-	socket.on('sendMessage', async (data, callback) => {
+	socket.on('send-message', async (data, callback) => {
 	  try {
 		const { message, roomId, userId } = data;
-		await this.messageService.sendMessage(message, userId);
-		socket.emit('messageSent', { message });
+		const newMessage = await this.messageService.saveMessage({ message, roomId, userId });
+		socket.broadcast.to(roomId).emit('broadcast-message', { message, time: newMessage.time }, function (ackData) {
+		  logger.Info(ackData);
+		});
+		callback(generateBasicCallback(true, false, 'message was sent successfully'));
 	  } catch (error) {
-		socket.emit('messageSent', { message: ERROR_MESSAGE });
+		callback(generateBasicCallback(false, true, error.message));
 	  }
 	});
   }
 }
+
+module.exports = new MessageSocket();
