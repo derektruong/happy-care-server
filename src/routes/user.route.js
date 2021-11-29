@@ -23,6 +23,8 @@ router.get('/:id', UserController.getUserInfoById);
 // PATCH
 router.patch('/me', auth, UserController.updateUser);
 
+// router.patch('/me/avatar', auth, UserController.updateUserAvatar);
+
 // DELETE
 router.delete('/me', auth, UserController.deleteUser);
 

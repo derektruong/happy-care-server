@@ -107,6 +107,10 @@ const updateUser = async (req, res) => {
   }
 };
 
+// const updateUserAvatar = async (req, res) => {
+
+// };
+
 // DELETE
 const deleteUser = async (req, res) => {
   try {
