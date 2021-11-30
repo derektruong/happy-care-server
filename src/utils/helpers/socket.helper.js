@@ -1,4 +1,4 @@
-const generateBasicCallback = (success, error, message) => {
+const generateBasicAck = (success, error, message) => {
 	return {
 		success,
 		error,
@@ -7,5 +7,5 @@ const generateBasicCallback = (success, error, message) => {
 }
 
 module.exports = {
-	generateBasicCallback,
+	generateBasicAck,
 };

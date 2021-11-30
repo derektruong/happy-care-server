@@ -1,4 +1,5 @@
 const logger = require('../../config/logger');
+const { generateBasicAck } = require('../helpers/socket.helper');
 const { ROOM_NAME, USER_STATUS } = require('../../config/constants');
 const UserService = require('../../services/user.service');
 const SpecializationService = require('../../services/specialization.service');
@@ -16,73 +17,109 @@ class AppSocket {
       const rs = this.userService.verifyUserRole(token);
       if (rs) {
         const { userId, userRole } = rs;
-        logger.Info(`${userRole} with id ${userId}`);
-        callback(await this.addUser({ socket, userId, userRole }));
+        logger.Info(`on event 'join': ${userRole} with id ${userId}`);
+        callback(generateBasicAck(true, false, await this.addUser({ socket, userId, userRole })));
       } else {
-        callback('user is not valid');
+        callback(generateBasicAck(false, true, 'user cannot join the app'));
       }
     });
   }
 
   getUsersInAppHandler(socket) {
     socket.on('get-users-in-app', (message, callback) => {
-      logger.Info(`get-users-in-app: ${message}`);
+      logger.Info(`on event 'get-users-in-app': ${message}`);
       if (this.users.length > 0) {
-        callback({ users: this.users });
+        callback({
+          ...generateBasicAck(true, false, 'get users in app successfully'),
+          data: {
+            users: this.users,
+          }
+        });
       } else {
-        callback('cannot found any users');
+        callback(generateBasicAck(false, true, 'cannot found any users'));
       }
     });
 
     socket.on('get-doctors-in-app', (message, callback) => {
-      logger.Info(`get-doctors-in-app: ${message}`);
+      logger.Info(`on event 'get-doctors-in-app': ${message}`);
       const doctors = this.users.filter((user) => user.userRole === 'doctor');
       if (doctors.length > 0) {
-        callback({ doctors });
+        callback({
+          ...generateBasicAck(true, false, 'get users in app successfully'),
+          data: {
+            doctors,
+          }
+        });
       } else {
-        callback('cannot found any doctors');
+        callback(generateBasicAck(false, true, 'cannot found any doctors'));
       }
     });
 
     socket.on('get-members-in-app', (message, callback) => {
-      logger.Info(`get-members-in-app: ${message}`);
+      logger.Info(`on event 'get-members-in-app': ${message}`);
       const members = this.users.filter((user) => user.userRole === 'member');
       if (members.length > 0) {
-        callback({ members });
+        callback({
+          ...generateBasicAck(true, false, 'get users in app successfully'),
+          data: {
+            members,
+          }
+        });
       } else {
-        callback('cannot found any members');
+        callback(generateBasicAck(false, true, 'cannot found any members'));
       }
     });
   }
 
   getNumberOfUsersHandler(socket) {
     socket.on('get-number-of-users', (message, callback) => {
-      logger.Info(`get-number-of-users: ${message}`);
-      callback({ numberOfUsers: this.users.length });
+      logger.Info(`on event 'get-number-of-users': ${message}`);
+      callback({
+        ...generateBasicAck(true, false, 'get number of users in app successfully'),
+        data: {
+          numberOfUsers: this.users.length,
+        }
+      });
     });
 
     socket.on('get-number-of-doctors', (message, callback) => {
-      logger.Info(`get-number-of-doctors: ${message}`);
+      logger.Info(`on event 'get-number-of-doctors': ${message}`);
       const doctors = this.users.filter((user) => user.userRole === 'doctor');
-      callback({ numberOfDoctors: doctors.length });
+      callback({
+        ...generateBasicAck(true, false, 'get number of doctors in app successfully'),
+        data: {
+          numberOfDoctors: doctors.length,
+        }
+      });
     });
 
     socket.on('get-number-of-members', (message, callback) => {
-      logger.Info(`get-number-of-members: ${message}`);
+      logger.Info(`on event 'get-number-of-members': ${message}`);
       const members = this.users.filter((user) => user.userRole === 'member');
-      callback({ numberOfMembers: members.length });
+      callback({
+        ...generateBasicAck(true, false, 'get number of members in app successfully'),
+        data: {
+          numberOfDoctors: members.length,
+        }
+      });
     });
   }
 
   getSocketRooms(io, socket) {
     socket.on('get-socket-rooms', (message, callback) => {
-      logger.Info(`get-socket-rooms: ${message}`);
-      callback({ rooms: io.sockets.adapter.rooms });
+      logger.Info(`on event 'get-socket-rooms': ${message}`);
+      callback({
+        ...generateBasicAck(true, false, 'get rooms of servers successfully'),
+        data: {
+          rooms: io.sockets.adapter.rooms,
+        }
+      });
     })
   }
 
   disconnectHandler(socket) {
     socket.on('disconnect', () => {
+      logger.Info(`on event 'disconnect'`);
       this.removeUser({ socketId: socket.id });
       logger.Info('a user disconnected');
     });
