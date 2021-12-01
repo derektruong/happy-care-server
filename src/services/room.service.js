@@ -88,9 +88,26 @@ const setUserReadMessage = async ({ userId, roomId }) => {
   }
 };
 
+const setUsersReadMessage = async ({ userIds, roomId }) => {
+  try {
+    const room = await RoomModel.findOne({ _id: roomId });
+    room.members = [];
+    userIds.forEach((userId) => {
+      room.members.push(userId);
+    });
+    await room.save();
+    return;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
+
 module.exports = {
   verifyRoom,
   getMyRooms,
   getMembersFromRoom,
   setUserReadMessage,
+  setUsersReadMessage,
 };

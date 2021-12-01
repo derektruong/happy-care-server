@@ -61,6 +61,13 @@ class MemberSocket {
     socket.on('leave-chat-room', (roomId, callback) => {
       try {
         logger.Info(`on event 'leave-chat-room' from roomId: ${roomId}`);
+        // remove user from chatRoom 
+        if (this.chatRooms[roomId]) {
+          const user = this.chatRooms[roomId].find((user) => user.id === socket.id);
+          if (user) {
+            this.chatRooms[roomId] = this.chatRooms[roomId].filter((user) => user.id !== socket.id);
+          }
+        }
         socket.leave(roomId);
         callback(generateBasicAck(true, false, `left room ${roomId}`));
       } catch (error) {

@@ -43,7 +43,7 @@ class WebSockets {
 
       //#region  MESSAGE SOCKET
       // handle on 'send message'
-      this.messageSocket.sendMessage(socket);
+      this.messageSocket.sendMessage(socket, this.userSocket.chatRooms);
 
       //#endregion
     });
