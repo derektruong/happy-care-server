@@ -55,6 +55,26 @@ class MessageSocket {
     });
   }
 
+  typingInRoom(socket) {
+    socket.on('typing-message', (options, callback) => {
+      try {
+        const { roomId, userId } = options;
+        logger.Info(`on event 'typing-message' from roomId: ${roomId} with userId: ${userId}`);
+        const user = this.userService.getUserInfoById({ userId });
+
+        // broadcast to all users in this room
+        socket.broadcast.to(roomId).emit('receive-typing-message', {
+          userName: user.profile.fullname,
+        });
+
+        callback(generateBasicAck(true, false, `typing in room ${roomId}`));
+      } catch (error) {
+        callback(generateBasicAck(false, true, error.message));
+      }
+      
+    });
+  }
+
   //#region methods helper
   async getUsersInsideAndOutsideChatRoom(roomId, chatRooms) {
     const users = await this.roomService.getMembersFromRoom(roomId);

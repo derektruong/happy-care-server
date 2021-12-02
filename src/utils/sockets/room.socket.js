@@ -7,7 +7,7 @@ const SpecializationService = require('../../services/specialization.service');
 const RoomService = require('../../services/room.service');
 const UserService = require('../../services/user.service');
 
-class MemberSocket {
+class RoomSocket {
   constructor() {
     this.userService = UserService;
     this.specializationService = SpecializationService;
@@ -77,4 +77,4 @@ class MemberSocket {
   }
 }
 
-module.exports = new MemberSocket();
+module.exports = new RoomSocket();

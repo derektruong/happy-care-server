@@ -1,12 +1,12 @@
 const logger = require('../../config/logger');
 const AppSocket = require('./app.socket');
-const UserSocket = require('./user.socket');
+const RoomSocket = require('./room.socket');
 const MessageSocket = require('./message.socket');
 
 class WebSockets {
   constructor() {
     this.appSocket = AppSocket;
-    this.userSocket = UserSocket;
+    this.roomSocket = RoomSocket;
     this.messageSocket = MessageSocket;
   }
   connection(io) {
@@ -30,20 +30,20 @@ class WebSockets {
       this.appSocket.disconnectHandler(socket);
       //#endregion
 
-      //#region USER SOCKET
+      //#region ROOM SOCKET
       // handle on 'join' event after user login
-      this.userSocket.getDoctorsFromSpecRoom(socket, this.appSocket.specRooms);
+      this.roomSocket.getDoctorsFromSpecRoom(socket, this.appSocket.specRooms);
 
       // handle on 'open chat room with doctor'
-      this.userSocket.openChatRoom(socket, this.appSocket.users);
+      this.roomSocket.openChatRoom(socket, this.appSocket.users);
 
       // handle on 'leave room' when user leave room
-      this.userSocket.leaveChatRoom(socket);
+      this.roomSocket.leaveChatRoom(socket);
       //#endregion
 
       //#region  MESSAGE SOCKET
       // handle on 'send message'
-      this.messageSocket.sendMessage(socket, this.userSocket.chatRooms);
+      this.messageSocket.sendMessage(socket, this.roomSocket.chatRooms);
 
       //#endregion
     });
