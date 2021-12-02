@@ -18,6 +18,41 @@ const saveMessage = async ({ messageContent, roomId, userId }) => {
 	}
 };
 
+const getMessages = async ({ roomId, start, limit }) => {
+	try {
+		const messages = await MessageModel
+								.find({ room: roomId })
+								.sort({ time: -1 })
+								.limit(limit)
+								.skip(start)
+								.lean();
+		return messages;
+	} catch (error) {
+		throw new Error(error.message);
+	}
+}
+
+const deleteMessageById = async ({ userId, roomId, messageId }) => {
+	try {
+		const message = await MessageModel.findOne({ _id: messageId, user: userId, room: roomId });
+		if (!message) {
+			throw {
+				status: 404,
+				message: 'message not found',
+			};
+		}
+		await MessageModel.deleteOne({ _id: messageId });
+		return message;
+	} catch (error) {
+		throw {
+			status: 500,
+			message: error.message,
+		};
+	}
+}
+
 module.exports = {
 	saveMessage,
+	getMessages,
+	deleteMessageById,
 }

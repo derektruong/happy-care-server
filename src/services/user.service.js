@@ -107,7 +107,6 @@ const verifyUserRole = (token) => {
     logger.Error(error.message);
     return null;
   }
-  
 }
 
 const getAllSpecializationsByUserId = async ({ userId }) => {
