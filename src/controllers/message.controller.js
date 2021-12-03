@@ -20,7 +20,7 @@ const deleteMessageById = async (req, res) => {
     const roomId = req.params.roomId;
     const messageId = req.params.messageId;
     const user = res.user;
-    await MessageService.deleteMessage({ userId: user._id, roomId, messageId });
+    await MessageService.deleteMessageById({ userId: user._id, roomId, messageId });
     return res.status(200).json(generateBasicResponse(true, false, 'delete message successfully'));
   } catch (error) {
     const { status, message } = error;

@@ -20,11 +20,12 @@ const saveMessage = async ({ messageContent, roomId, userId }) => {
 
 const getMessages = async ({ roomId, start, limit }) => {
   try {
-    const messages = await MessageModel.find({ room: roomId })
-      .sort({ time: -1 })
-      .skip(Number(start))
-      .limit(Number(limit))
-      .lean();
+    const messages = await MessageModel
+							.find({ room: roomId, isDeleted: false })
+							.sort({ time: -1 })
+							.skip(Number(start))
+							.limit(Number(limit))
+							.lean();
     return messages;
   } catch (error) {
     throw new Error(error.message);
