@@ -42,7 +42,7 @@ class MessageSocket {
         
         // setup user in room read this message
         const userInsideIds = usersInside.map(user => user.userId);
-        await this.roomService.setUsersReadMessage({ 
+        await this.roomService.setUsersReadMessage({
           userIds: userInsideIds, 
           roomId,
         });
@@ -78,7 +78,7 @@ class MessageSocket {
   //#region methods helper
   async getUsersInsideAndOutsideChatRoom(roomId, chatRooms) {
     const users = await this.roomService.getMembersFromRoom(roomId);
-    const usersCurrent = chatRooms[roomId] ? chatRooms[roomId].users : [];
+    const usersCurrent = chatRooms[roomId] ? chatRooms[roomId] : [];
 
     const usersOutside = users.map(user => {
       if (!usersCurrent.find(userCurrent => userCurrent.userId === user._id)) {

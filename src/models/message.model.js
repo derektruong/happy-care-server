@@ -27,13 +27,25 @@ const messageSchema = new mongoose.Schema(
       ref: 'Room',
       required: true,
     },
-    status: {
+    isDeleted: {
       type: Boolean,
       default: false,
     },
   },
   options
 );
+
+// * toJSON
+messageSchema.methods.toJSON = function () {
+  const message = this;
+  const messageObject = message.toObject();
+
+  delete messageObject.updatedAt;
+  delete messageObject.createdAt;
+  delete messageObject.__v;
+
+  return messageObject;
+};
 
 const Message = mongoose.model('Message', messageSchema);
 module.exports = Message;
