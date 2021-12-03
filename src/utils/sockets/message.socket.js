@@ -13,19 +13,20 @@ class MessageSocket {
   async sendMessage(socket, chatRooms) {
     socket.on('send-message', async (data, callback) => {
       try {
-        const { message, roomId, userId } = data;
+        const { content, roomId, userId } = data;
         logger.Info(`on event 'send-message' to roomId: ${roomId} with userId: ${userId}`);
 
         // save the message to database
         const newMessage = await this.messageService.saveMessage({
-          messageContent: message,
+          messageContent: content,
           roomId,
           userId,
         });
 
         // broadcast message to all users inside chat room
         socket.broadcast.to(roomId).emit('receive-message', {
-          message,
+          content,
+          type: newMessage.type,
           user: newMessage.user,
           time: newMessage.time,
         });
@@ -34,7 +35,9 @@ class MessageSocket {
         const { usersOutside, usersInside } = await this.getUsersInsideAndOutsideChatRoom(roomId, chatRooms);
         usersOutside.forEach(user => {
           socket.to(user._id).emit('receive-new-message', {
-            message,
+            content,
+            type: newMessage.type,
+            room: newMessage.room,
             user: newMessage.user,
             time: newMessage.time,
           });
@@ -43,7 +46,7 @@ class MessageSocket {
         // setup user in room read this message
         const userInsideIds = usersInside.map(user => user.userId);
         await this.roomService.setUsersReadMessage({
-          userIds: userInsideIds, 
+          userIds: userInsideIds,
           roomId,
         });
 
