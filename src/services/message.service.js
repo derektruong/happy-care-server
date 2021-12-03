@@ -1,10 +1,11 @@
 const moment = require('moment');
 const MessageModel = require('../models/message.model');
 
-const saveMessage = async ({ messageContent, roomId, userId }) => {
+const saveMessage = async ({ messageContent, messageType, roomId, userId }) => {
   try {
     const messageData = {
       content: messageContent,
+	  type: messageType,
       user: userId,
       room: roomId,
       time: moment(),

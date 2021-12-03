@@ -13,12 +13,13 @@ class MessageSocket {
   async sendMessage(socket, chatRooms) {
     socket.on('send-message', async (data, callback) => {
       try {
-        const { content, roomId, userId } = data;
+        const { content, type, roomId, userId } = data;
         logger.Info(`on event 'send-message' to roomId: ${roomId} with userId: ${userId}`);
 
         // save the message to database
         const newMessage = await this.messageService.saveMessage({
           messageContent: content,
+          messageType: type,
           roomId,
           userId,
         });
