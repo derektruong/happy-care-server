@@ -24,6 +24,10 @@ const roomSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    hasMessages: {
+      type: Boolean,
+      default: false,
+    },
   },
   options
 );

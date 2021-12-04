@@ -43,13 +43,6 @@ const getMyRooms = async (userId) => {
         room.isRead = false;
       }
 
-      const messages = await MessageModel.findOne({ room: room._id, isDeleted: false });
-      if (messages) {
-        room.hasMessage = true;
-      } else {
-        room.hasMessage = false;
-      }
-
       delete room.readBy;
       delete room.literalName;
       delete room.__v;

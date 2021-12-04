@@ -1,5 +1,6 @@
 const moment = require('moment');
 const MessageModel = require('../models/message.model');
+const RoomModel = require('../models/room.model');
 
 const saveMessage = async ({ messageContent, messageType, roomId, userId }) => {
   try {
@@ -12,6 +13,11 @@ const saveMessage = async ({ messageContent, messageType, roomId, userId }) => {
     };
     const message = MessageModel(messageData);
     await message.save();
+
+    // find room by roomId
+    const room = await RoomModel.findOne({ _id: roomId });
+    room.hasMessages = true;
+    await room.save();
 
     return message;
   } catch (error) {
