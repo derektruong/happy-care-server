@@ -27,6 +27,7 @@ const saveMessage = async ({ messageContent, messageType, roomId, userId }) => {
 
 const getMessages = async ({ roomId, start, limit }) => {
   try {
+    
     const messages = await MessageModel
 							.find({ room: roomId, isDeleted: false })
 							.sort({ time: -1 })

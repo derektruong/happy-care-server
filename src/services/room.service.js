@@ -33,7 +33,7 @@ const getMyRooms = async (userId) => {
     const rooms = await RoomModel.find({
       members: userId,
     })
-      .populate('members', '_id profile.fullname')
+      .populate('members', '_id email role profile.fullname profile.gender profile.avatar specializations background')
       .lean();
 
     await Promise.all(rooms.map(async (room) => {
