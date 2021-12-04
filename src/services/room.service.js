@@ -1,5 +1,4 @@
 const logger = require('../config/logger');
-const { ERROR_MESSAGE } = require('../config/constants');
 const RoomModel = require('../models/room.model');
 const MessageModel = require('../models/message.model');
 const UserModel = require('../models/user.model');
@@ -44,11 +43,11 @@ const getMyRooms = async (userId) => {
         room.isRead = false;
       }
 
-      const messages = await MessageModel.findOne({ roomId: room._id });
+      const messages = await MessageModel.findOne({ room: room._id, isDeleted: false });
       if (messages) {
-        room.haveMessage = true;
+        room.hasMessage = true;
       } else {
-        room.haveMessage = false;
+        room.hasMessage = false;
       }
 
       delete room.readBy;
@@ -78,9 +77,9 @@ const getMembersFromRoom = async (roomId) => {
 const setUserReadMessage = async ({ userId, roomId }) => {
   try {
     const room = await RoomModel.findOne({ _id: roomId });
-    const index = room.members.indexOf(userId);
+    const index = room.readBy.indexOf(userId);
     if (index !== -1) return;
-    room.members.push(userId);
+    room.readBy.push(userId);
     await room.save();
     return;
   } catch (error) {
@@ -91,9 +90,9 @@ const setUserReadMessage = async ({ userId, roomId }) => {
 const setUsersReadMessage = async ({ userIds, roomId }) => {
   try {
     const room = await RoomModel.findOne({ _id: roomId });
-    room.members = [];
+    room.readBy = [];
     userIds.forEach((userId) => {
-      room.members.push(userId);
+      room.readBy.push(userId);
     });
     await room.save();
     return;
@@ -101,8 +100,6 @@ const setUsersReadMessage = async ({ userIds, roomId }) => {
     throw new Error(error.message);
   }
 }
-
-
 
 module.exports = {
   verifyRoom,
