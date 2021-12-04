@@ -5,7 +5,7 @@ const saveMessage = async ({ messageContent, messageType, roomId, userId }) => {
   try {
     const messageData = {
       content: messageContent,
-	  type: messageType,
+	    type: messageType,
       user: userId,
       room: roomId,
       time: moment(),
