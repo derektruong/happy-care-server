@@ -14,7 +14,9 @@ class MessageSocket {
     socket.on('send-message', async (data, callback) => {
       try {
         const { content, type, roomId, userId } = data;
-        logger.Info(`on event 'send-message' to roomId: ${roomId} with userId: ${userId}`);
+        logger.Info(
+          `on event 'send-message' to roomId: ${roomId} with userId: ${userId}`
+        );
 
         // save the message to database
         const newMessage = await this.messageService.saveMessage({
@@ -33,8 +35,9 @@ class MessageSocket {
         });
 
         // notify all users outside chat room
-        const { usersOutside, usersInside } = await this.getUsersInsideAndOutsideChatRoom(roomId, chatRooms);
-        usersOutside.forEach(user => {
+        const { usersOutside, usersInside } =
+          await this.getUsersInsideAndOutsideChatRoom(roomId, chatRooms);
+        usersOutside.forEach((user) => {
           socket.to(user._id).emit('receive-new-message', {
             content,
             type: newMessage.type,
@@ -43,16 +46,20 @@ class MessageSocket {
             time: newMessage.time,
           });
         });
-        
+
         // setup user in room read this message
-        const userInsideIds = usersInside.map(user => user.userId);
+        const userInsideIds = usersInside.map((user) => user.userId);
         await this.roomService.setUsersReadMessage({
           userIds: userInsideIds,
           roomId,
         });
 
-        callback(generateBasicAck(true, false, 'message was sent successfully'));
-        logger.Info(`emit event 'receive-message' to roomId: ${roomId} with userId: ${userId} and time: ${newMessage.time}`);
+        callback(
+          generateBasicAck(true, false, 'message was sent successfully')
+        );
+        logger.Info(
+          `emit event 'receive-message' to roomId: ${roomId} with userId: ${userId} and time: ${newMessage.time}`
+        );
       } catch (error) {
         callback(generateBasicAck(false, true, error.message));
       }
@@ -62,30 +69,39 @@ class MessageSocket {
   typingInRoom(socket) {
     socket.on('typing-message', (options, callback) => {
       try {
-        const { roomId, userId } = options;
-        logger.Info(`on event 'typing-message' from roomId: ${roomId} with userId: ${userId}`);
+        const { roomId, userId, isTyping } = options;
+        logger.Info(
+          `on event 'typing-message' from roomId: ${roomId} with userId: ${userId}`
+        );
         const user = this.userService.getUserInfoById({ userId });
 
         // broadcast to all users in this room
         socket.broadcast.to(roomId).emit('receive-typing-message', {
           userName: user.profile.fullname,
         });
+        if (isTyping) {
+          return callback({
+            ...generateBasicAck(true, false, `typing in room ${roomId}`),
+            data: {
+              userId,
+            },
+          });
+        }
 
-        callback({
-          ...generateBasicAck(true, false, `typing in room ${roomId}`),
+        return callback({
+          ...generateBasicAck(false, true, 'has no typing'),
           data: {
-            userId,
-          }
+            userId: null,
+          },
         });
       } catch (error) {
         callback({
           ...generateBasicAck(false, true, error.message),
           data: {
             userId: null,
-          }
+          },
         });
       }
-      
     });
   }
 
@@ -94,8 +110,10 @@ class MessageSocket {
     const users = await this.roomService.getMembersFromRoom(roomId);
     const usersCurrent = chatRooms[roomId] ? chatRooms[roomId] : [];
 
-    const usersOutside = users.map(user => {
-      if (!usersCurrent.find(userCurrent => userCurrent.userId === user._id)) {
+    const usersOutside = users.map((user) => {
+      if (
+        !usersCurrent.find((userCurrent) => userCurrent.userId === user._id)
+      ) {
         return user;
       }
     });
@@ -103,7 +121,7 @@ class MessageSocket {
     return {
       usersOutside,
       usersInside: usersCurrent,
-    }
+    };
   }
   //#endregion
 }
