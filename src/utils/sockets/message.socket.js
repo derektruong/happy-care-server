@@ -71,9 +71,19 @@ class MessageSocket {
           userName: user.profile.fullname,
         });
 
-        callback(generateBasicAck(true, false, `typing in room ${roomId}`));
+        callback({
+          ...generateBasicAck(true, false, `typing in room ${roomId}`),
+          data: {
+            userId,
+          }
+        });
       } catch (error) {
-        callback(generateBasicAck(false, true, error.message));
+        callback({
+          ...generateBasicAck(false, true, error.message),
+          data: {
+            userId: null,
+          }
+        });
       }
       
     });

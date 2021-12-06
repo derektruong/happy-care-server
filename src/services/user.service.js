@@ -6,11 +6,24 @@ const SpecializationService = require('../services/specialization.service');
 
 const createUser = async ({ userFields }) => {
   try {
+    const { email } = userFields;
+    const isUserExist = await User.findOne({ email }) ? true : false;
+
+    if (isUserExist) {
+      throw {
+        status: 400,
+        message: 'email is already exist',
+      };
+    }
+    
     const user = User(userFields);
     await user.save();
     return;
   } catch (error) {
-    throw new Error(error.message);
+    throw {
+      status: 400,
+      message: error.message,
+    };
   }
 };
 
