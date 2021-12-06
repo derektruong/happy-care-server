@@ -45,6 +45,9 @@ class WebSockets {
       // handle on 'send message'
       this.messageSocket.sendMessage(socket, this.roomSocket.chatRooms);
 
+      // handle on 'typing in room'
+      this.messageSocket.typingInRoom(socket);
+
       //#endregion
     });
   }
