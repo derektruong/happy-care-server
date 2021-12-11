@@ -13,6 +13,9 @@ const specializationSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    keywords: {
+      type: [String],
+    },
   },
   options
 );

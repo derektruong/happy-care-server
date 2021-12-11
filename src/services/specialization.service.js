@@ -1,5 +1,4 @@
 const Specialization = require('../models/specialization.model');
-const ObjectId = require('mongodb').ObjectID;
 
 const createSpecialization = async ({ user, createBody }) => {
   try {

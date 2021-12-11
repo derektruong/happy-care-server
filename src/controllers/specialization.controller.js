@@ -10,9 +10,7 @@ const createSpecialization = async (req, res) => {
       createBody: specialization,
     });
 
-    res.json(
-      generateBasicResponse(true, false, 'create specialization successfully')
-    );
+    res.json(generateBasicResponse(true, false, 'create specialization successfully'));
   } catch (error) {
     const { status, message } = error;
     if (status === 400) {
