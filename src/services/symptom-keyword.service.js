@@ -27,6 +27,9 @@ const createSymptomKeyword = async ({ names, user }) => {
 const getAllSymptomKeywords = async () => {
   try {
     const keywords = await SymptomKeyword.find({});
+    delete keywords.__v;
+    delete keywords.createdAt;
+    delete keywords.updatedAt;
 
     return { keywords };
   } catch (error) {
@@ -34,7 +37,21 @@ const getAllSymptomKeywords = async () => {
   }
 };
 
+const getSymptomKeywordById = async (id) => {
+  try {
+    const keyword = await SymptomKeyword.findById(id);
+    delete keyword.__v;
+    delete keyword.createdAt;
+    delete keyword.updatedAt;
+
+    return { keyword };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   createSymptomKeyword,
   getAllSymptomKeywords,
+  getSymptomKeywordById,
 };

@@ -39,7 +39,22 @@ const getAllSymptomKeywords = async (req, res) => {
   }
 }
 
+const getSymptomKeywordById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const rs = await SymptomKeywordService.getSymptomKeywordById(id);
+
+    res.json({
+      ...generateBasicResponse(true, false, 'get keyword successfully'),
+      data: rs,
+    });
+  } catch (error) {
+    res.status(500).json(generateBasicResponse(false, true, error.message));
+  }
+}
+
 module.exports = {
   createSymptomKeyword,
   getAllSymptomKeywords,
+  getSymptomKeywordById,
 };

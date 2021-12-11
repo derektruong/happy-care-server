@@ -5,10 +5,12 @@ const auth = require('../middleware/auth');
 const router = new express.Router();
 
 // POST
-router.post('/symptom-keyword', auth, SymptomKeyword.createSymptomKeyword);
+router.post('/', auth, SymptomKeyword.createSymptomKeyword);
 
 // GET
-router.get('/symptom-keyword', SymptomKeyword.getAllSymptomKeywords);
+router.get('/', SymptomKeyword.getAllSymptomKeywords);
+
+router.get('/:id', auth, SymptomKeyword.getSymptomKeywordById);
 
 // PATCH
 // router.patch('/admin/keyword/:id', auth, SymptomKeyword.updateKeyword);

@@ -67,6 +67,16 @@ const getAllSpecializations = async () => {
   }
 };
 
+const getSpecializationsBySymptomKeyword = async (symptomKeywords) => {
+  try {
+    const specializations = await Specialization.find({ keywords: { $in: symptomKeywords } });
+
+    return { specializations };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 const updateSpecialization = async ({
   user,
   updateFields,
@@ -91,7 +101,7 @@ const updateSpecialization = async ({
         message: 'specialization not found',
       };
     }
-    const allowedUpdate = ['name', 'description'];
+    const allowedUpdate = ['name', 'description', 'keywords'];
 
     const isValidOperator = updateFields.every((update) =>
       allowedUpdate.includes(update)
@@ -170,6 +180,7 @@ module.exports = {
   createSpecialization,
   addSpecializationForUser,
   getAllSpecializations,
+  getSpecializationsBySymptomKeyword,
   updateSpecialization,
   deleteSpecialization,
   getAllSpecializationIds,
