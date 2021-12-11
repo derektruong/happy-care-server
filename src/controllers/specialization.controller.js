@@ -60,6 +60,25 @@ const getAllSpecializations = async (req, res) => {
   }
 };
 
+const getSpecializationsBySymptomKeyword = async (req, res) => {
+  
+  try {
+    const { keywords } = req.body;
+    const rs = await SpecializationService.getSpecializationsBySymptomKeyword(keywords);
+
+    res.json({
+      ...generateBasicResponse(
+        true,
+        false,
+        'get specializations by symptom keyword successfully'
+      ),
+      data: rs,
+    });
+  } catch (error) {
+    res.status(500).json(generateBasicResponse(false, true, error.message));
+  }
+}
+
 const getSpecializationOfUser = async (req, res) => {
   try {
     if (res.user.role === 'admin') {
@@ -118,6 +137,7 @@ module.exports = {
   createSpecialization,
   addSpecializationForUser,
   getAllSpecializations,
+  getSpecializationsBySymptomKeyword,
   getSpecializationOfUser,
   updateSpecialization,
   deleteSpecialization,

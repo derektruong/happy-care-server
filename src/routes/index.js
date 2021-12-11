@@ -8,7 +8,7 @@ const NewsRoute = require('./news.route');
 const initRoutes = (app) => {
 	app.use('/api/users', UserRoute);
 	app.use('/api', SpecializationRoute);
-	app.use('/api/admin', SymptomKeywordRoute);
+	app.use('/api/symptom-keyword', SymptomKeywordRoute);
 	app.use('/api/rooms', RoomRoute);
 	app.use('/api/messages', MessageRoute);
 	app.use('/api/news', NewsRoute);

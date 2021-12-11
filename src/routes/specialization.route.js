@@ -1,23 +1,25 @@
 const express = require('express');
-const Specialization = require('../controllers/specialization.controller');
+const SpecializationController = require('../controllers/specialization.controller');
 const auth = require('../middleware/auth');
 
 const router = new express.Router();
 
 // POST
-router.post('/admin/specialization', auth, Specialization.createSpecialization);
+router.post('/admin/specialization', auth, SpecializationController.createSpecialization);
 
-router.post('/users/me/specialization', auth, Specialization.addSpecializationForUser);
+router.post('/users/me/specialization', auth, SpecializationController.addSpecializationForUser);
 
 // GET
-router.get('/admin/specialization', Specialization.getAllSpecializations);
+router.get('/admin/specialization', SpecializationController.getAllSpecializations);
 
-router.get('/users/me/specialization', auth, Specialization.getSpecializationOfUser);
+router.get('/users/specialization/symptom-keyword', auth, SpecializationController.getSpecializationsBySymptomKeyword);
+
+router.get('/users/me/specialization', auth, SpecializationController.getSpecializationOfUser);
 
 // PATCH
-router.patch('/admin/specialization/:id', auth, Specialization.updateSpecialization);
+router.patch('/admin/specialization/:id', auth, SpecializationController.updateSpecialization);
 
 // DELETE
-router.delete('/admin/specialization/:id', auth, Specialization.deleteSpecialization);
+router.delete('/admin/specialization/:id', auth, SpecializationController.deleteSpecialization);
 
 module.exports = router;

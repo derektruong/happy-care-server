@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const options = { timestamps: true };
-const symptomKeywordSchema = mongoose.Schema(
+const drugSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -9,10 +9,14 @@ const symptomKeywordSchema = mongoose.Schema(
       unique: true,
       trim: true,
     },
+    description: {
+      type: String,
+      trim: true,
+    },
   },
   options
 );
 
-const SymptomKeyword = mongoose.model('Symptom-Keyword', symptomKeywordSchema);
+const Drug = mongoose.model('Drug', drugSchema);
 
-module.exports = SymptomKeyword;
+module.exports = Drug;

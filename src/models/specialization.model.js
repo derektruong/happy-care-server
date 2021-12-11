@@ -13,9 +13,13 @@ const specializationSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    keywords: {
-      type: [String],
-    },
+    keywords: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Symptom-Keyword',
+        unique: true,
+      }
+    ],
   },
   options
 );
