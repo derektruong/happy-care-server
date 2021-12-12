@@ -63,8 +63,8 @@ const getAllSpecializations = async (req, res) => {
 const getSpecializationsBySymptomKeyword = async (req, res) => {
   
   try {
-    const { keywords } = req.body;
-    const rs = await SpecializationService.getSpecializationsBySymptomKeyword(keywords);
+    const { keys } = req.query;
+    const rs = await SpecializationService.getSpecializationsBySymptomKeyword(keys);
 
     res.json({
       ...generateBasicResponse(

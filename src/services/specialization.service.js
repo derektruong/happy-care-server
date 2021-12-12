@@ -67,8 +67,9 @@ const getAllSpecializations = async () => {
   }
 };
 
-const getSpecializationsBySymptomKeyword = async (symptomKeywords) => {
+const getSpecializationsBySymptomKeyword = async (keys) => {
   try {
+    const symptomKeywords = keys.split(',');
     const specializations = await Specialization.find({ keywords: { $in: symptomKeywords } });
 
     return { specializations };
