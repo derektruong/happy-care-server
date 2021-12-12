@@ -1,6 +1,7 @@
+const { leanArray, leanObject } = require('../utils/helpers/api.helper');
 const Drug = require('../models/drug.model');
 
-const createDrug = async ({ name, description, user }) => {
+const createDrug = async ({ createData, user }) => {
   try {
     // authorizate adminstrator
     if (user.role !== 'admin') {
@@ -10,7 +11,7 @@ const createDrug = async ({ name, description, user }) => {
       };
     }
 
-    const keyword = Drug({ name, description });
+    const keyword = Drug(createData);
     await keyword.save();
 
     return;
@@ -25,11 +26,7 @@ const createDrug = async ({ name, description, user }) => {
 const getAllDrugs = async () => {
   try {
     const keywords = await Drug.find({ isDeleted: false });
-    delete keywords.__v;
-    delete keywords.createdAt;
-    delete keywords.updatedAt;
-
-    return { keywords };
+    return { keywords: leanArray(keywords) };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -38,11 +35,7 @@ const getAllDrugs = async () => {
 const getDrugById = async (id) => {
   try {
     const keyword = await Drug.findOne({ _id: id, isDeleted: false });
-    delete keyword.__v;
-    delete keyword.createdAt;
-    delete keyword.updatedAt;
-
-    return { keyword };
+    return { keyword: leanObject(keyword) };
   } catch (error) {
     throw new Error(error.message);
   }

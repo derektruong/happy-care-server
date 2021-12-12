@@ -1,4 +1,5 @@
 const logger = require('../config/logger');
+const { leanArray } = require('../utils/helpers/api.helper');
 const Prescription = require('../models/prescription.model');
 const UserService = require('../services/user.service');
 
@@ -28,7 +29,7 @@ const createPrescription = async (createData, user) => {
     }
 
     createData['date'] = createData.date
-      ? new Date(createData.date)
+      ? new Date(createData.date * 1000)
       : new Date();
 
     const prescription = Prescription(createData);
@@ -49,18 +50,18 @@ const getPrescriptionByMe = async (user) => {
       const prescription = await Prescription.find({
         member: user._id,
         isDeleted: false,
-      });
-      return prescription;
+      }).lean();
+      return { prescriptions: leanArray(prescription) };
     } else if (user.role === 'doctor') {
       const prescription = await Prescription.find({
         doctor: user._id,
         isDeleted: false,
-      });
-      return prescription;
+      }).lean();
+      return { prescriptions: leanArray(prescription) };
     }
 
-    const prescription = await Prescription.find({});
-    return prescription;
+    const prescription = await Prescription.find({}).lean();
+    return { prescriptions: leanArray(prescription) };
   } catch (error) {
     throw {
       status: 500,
@@ -94,7 +95,7 @@ const updatePrescription = async (id, updateFields, updateData, user) => {
       };
     }
 
-    const allowedUpdate = ['diagnose', 'medicines', 'note'];
+    const allowedUpdate = ['diagnose', 'medicines', 'date', 'note'];
 
     let isValidOperator = updateFields.every((update) =>
       allowedUpdate.includes(update)
@@ -108,7 +109,7 @@ const updatePrescription = async (id, updateFields, updateData, user) => {
     }
 
     updateFields.forEach((update) => {
-      prescription[update] = updateBody[update];
+      prescription[update] = updateData[update];
     });
 
     await prescription.save();
@@ -123,7 +124,7 @@ const updatePrescription = async (id, updateFields, updateData, user) => {
 
 const deletePrescription = async (id, user) => {
   try {
-    // check user is doctor or not
+    // check user is admin or not
     if (user.role !== 'admin') {
       throw {
         status: 400,

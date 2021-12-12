@@ -20,7 +20,7 @@ const createPrescription = async (req, res) => {
 
 const getPrescriptionByMe = async (req, res) => {
   try {
-    const rs = await PrescriptionService.getPrescriptionByMe(req.user);
+    const rs = await PrescriptionService.getPrescriptionByMe(res.user);
 
     res.json({
       ...generateBasicResponse(

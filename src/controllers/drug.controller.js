@@ -3,11 +3,10 @@ const { generateBasicResponse } = require('../utils/helpers/api.helper');
 
 const createDrug = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const createData = req.body;
     // authorizate adminstrator
     await DrugService.createDrug({
-      name,
-      description,
+      createData,
       user: res.user,
     });
 
