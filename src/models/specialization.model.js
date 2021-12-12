@@ -20,6 +20,10 @@ const specializationSchema = mongoose.Schema(
         unique: true,
       }
     ],
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   options
 );
