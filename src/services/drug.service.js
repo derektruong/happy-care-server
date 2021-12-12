@@ -1,6 +1,6 @@
-const SymptomKeyword = require('../models/symptom-keyword.model');
+const Drug = require('../models/drug.model');
 
-const createSymptomKeyword = async ({ names, user }) => {
+const createDrug = async ({ name, description, user }) => {
   try {
     // authorizate adminstrator
     if (user.role !== 'admin') {
@@ -10,10 +10,8 @@ const createSymptomKeyword = async ({ names, user }) => {
       };
     }
 
-    names.forEach(async (name) => {
-      const keyword = SymptomKeyword({ name });
-      await keyword.save();
-    });
+    const keyword = Drug({ name, description });
+    await keyword.save();
 
     return;
   } catch (error) {
@@ -24,9 +22,9 @@ const createSymptomKeyword = async ({ names, user }) => {
   }
 };
 
-const getAllSymptomKeywords = async () => {
+const getAllDrugs = async () => {
   try {
-    const keywords = await SymptomKeyword.find({});
+    const keywords = await Drug.find({ isDeleted: false });
     delete keywords.__v;
     delete keywords.createdAt;
     delete keywords.updatedAt;
@@ -37,9 +35,9 @@ const getAllSymptomKeywords = async () => {
   }
 };
 
-const getSymptomKeywordById = async (id) => {
+const getDrugById = async (id) => {
   try {
-    const keyword = await SymptomKeyword.findById(id);
+    const keyword = await Drug.findOne({ _id: id, isDeleted: false });
     delete keyword.__v;
     delete keyword.createdAt;
     delete keyword.updatedAt;
@@ -48,9 +46,9 @@ const getSymptomKeywordById = async (id) => {
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
-const updateSymptomKeywordById = async (id, name, user) => {
+const updateDrugById = async (id, updateData, user) => {
   try {
     // authorizate adminstrator
     if (user.role !== 'admin') {
@@ -59,8 +57,7 @@ const updateSymptomKeywordById = async (id, name, user) => {
         message: 'unauthorized for people have no adminstrator role',
       };
     }
-
-    await SymptomKeyword.findByIdAndUpdate(id, { name });
+    await Drug.findByIdAndUpdate(id, updateData);
     return;
   } catch (error) {
     throw {
@@ -68,9 +65,9 @@ const updateSymptomKeywordById = async (id, name, user) => {
       message: error.message,
     };
   }
-}
+};
 
-const deleteSymptomKeywordById = async (id, user) => {
+const deleteDrugById = async (id, user) => {
   try {
     // authorizate adminstrator
     if (user.role !== 'admin') {
@@ -79,8 +76,7 @@ const deleteSymptomKeywordById = async (id, user) => {
         message: 'unauthorized for people have no adminstrator role',
       };
     }
-
-    await SymptomKeyword.findByIdAndDelete(id);
+    await Drug.findByIdAndUpdate(id, { isDeleted: true });
     return;
   } catch (error) {
     throw {
@@ -88,12 +84,12 @@ const deleteSymptomKeywordById = async (id, user) => {
       message: error.message,
     };
   }
-}
+};
 
 module.exports = {
-  createSymptomKeyword,
-  getAllSymptomKeywords,
-  getSymptomKeywordById,
-  updateSymptomKeywordById,
-  deleteSymptomKeywordById,
+  createDrug,
+  getAllDrugs,
+  getDrugById,
+  updateDrugById,
+  deleteDrugById,
 };

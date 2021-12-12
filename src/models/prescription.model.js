@@ -6,19 +6,41 @@ const prescriptionSchema = mongoose.Schema(
     diagnose: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    drugs: [
+    medicines: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Drug',
+        drug: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Drug',
+        },
+        dosage: {
+          type: String,
+          trim: true,
+        },
       }
     ],
+    member: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    date: {
+      type: Date,
+    },
+    note: {
+      type: String,
+      trim: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   options
 );
