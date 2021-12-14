@@ -96,7 +96,8 @@ const userSchema = new mongoose.Schema(
     background: [
       {
         figure: {
-          type: Buffer,
+          type: String,
+          trim: true,
         },
         description: {
           type: String,
