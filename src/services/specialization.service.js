@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Specialization = require('../models/specialization.model');
 
 const createSpecialization = async ({ user, createBody }) => {
@@ -11,7 +12,7 @@ const createSpecialization = async ({ user, createBody }) => {
     }
     const specialization = Specialization(createBody);
     await specialization.save();
-    
+
     return;
   } catch (error) {
     throw {
@@ -21,7 +22,7 @@ const createSpecialization = async ({ user, createBody }) => {
   }
 };
 
-const addSpecializationForUser = async ({user, specializations}) => {
+const addSpecializationForUser = async ({ user, specializations }) => {
   try {
     if (user.role === 'admin') {
       throw {
@@ -70,13 +71,25 @@ const getAllSpecializations = async () => {
 const getSpecializationsBySymptomKeyword = async (keys) => {
   try {
     const symptomKeywords = keys.split(',');
-    const specializations = await Specialization.find({ keywords: { $in: symptomKeywords } });
-
-    return { specializations };
+    const specializations = await Specialization.find({}).lean();
+    let filterSpecializations = specializations.map((spec) => {
+      if (spec && spec.keywords) {
+        spec.keywords.forEach((keyword, index) => {
+          spec.keywords[index] = keyword.toString();
+        });
+        if (_.intersection(spec.keywords, symptomKeywords).length >= 2) {
+          return spec;
+        }
+      }
+    });
+    filterSpecializations = filterSpecializations.filter(
+      (spec) => spec !== undefined
+    );
+    return { specializations: filterSpecializations };
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const updateSpecialization = async ({
   user,
@@ -165,17 +178,17 @@ const deleteSpecialization = async ({ user, specializationId }) => {
 const getAllSpecializationIds = async () => {
   const { specializations } = await getAllSpecializations();
   return specializations.map((spec) => spec._id.toString());
-}
+};
 
 const getSpecNameById = async ({ specId }) => {
   const specializations = await Specialization.findById(specId);
   return specializations.name;
-}
+};
 
 const getSpecIdByName = async ({ specName }) => {
   const { specializations } = await Specialization.findOne({ name: specName });
   return specializations.map((spec) => spec._id.toString());
-}
+};
 
 module.exports = {
   createSpecialization,
