@@ -75,7 +75,11 @@ const getSpecializationsBySymptomKeyword = async (req, res) => {
       data: rs,
     });
   } catch (error) {
-    res.status(500).json(generateBasicResponse(false, true, error.message));
+    const { status, message } = error;
+    if (status === 400) {
+      return res.status(400).json(generateBasicResponse(false, false, message));
+    }
+    res.status(500).json(generateBasicResponse(false, true, message));
   }
 }
 

@@ -71,23 +71,38 @@ const getAllSpecializations = async () => {
 const getSpecializationsBySymptomKeyword = async (keys) => {
   try {
     const symptomKeywords = keys.split(',');
-    const specializations = await Specialization.find({}).lean();
-    let filterSpecializations = specializations.map((spec) => {
-      if (spec && spec.keywords) {
-        spec.keywords.forEach((keyword, index) => {
-          spec.keywords[index] = keyword.toString();
-        });
-        if (_.intersection(spec.keywords, symptomKeywords).length >= 2) {
-          return spec;
+    if (symptomKeywords.length === 0) {
+      throw {
+        status: 400,
+        message: 'please check again',
+      };
+    }
+    
+    if (symptomKeywords.length > 2) {
+      const specializations = await Specialization.find({}).lean();
+      let filterSpecializations = specializations.map((spec) => {
+        if (spec && spec.keywords) {
+          spec.keywords.forEach((keyword, index) => {
+            spec.keywords[index] = keyword.toString();
+          });
+          if (_.intersection(spec.keywords, symptomKeywords).length >= 2) {
+            return spec;
+          }
         }
-      }
-    });
-    filterSpecializations = filterSpecializations.filter(
-      (spec) => spec !== undefined
-    );
-    return { specializations: filterSpecializations };
+      });
+      filterSpecializations = filterSpecializations.filter(
+        (spec) => spec !== undefined
+      );
+      return { specializations: filterSpecializations };
+    } else {
+      const specializations = await Specialization.find({ keywords: { $in: symptomKeywords } }).lean();
+      return { specializations };
+    }
   } catch (error) {
-    throw new Error(error.message);
+    throw {
+      status: 500,
+      message: 'please check again',
+    };
   }
 };
 
