@@ -3,11 +3,13 @@ const { generateBasicAck } = require('../helpers/socket.helper');
 const logger = require('../../config/logger');
 const RoomService = require('../../services/room.service');
 const MessageService = require('../../services/message.service');
+const UserService = require('../../services/user.service');
 
 class MessageSocket {
   constructor() {
     this.roomService = RoomService;
     this.messageService = MessageService;
+    this.userService = UserService;
   }
 
   async sendMessage(socket, chatRooms) {
