@@ -52,7 +52,7 @@ const logoutUser = async ({ user }) => {
 const getUserInfoById = async ({ userId }) => {
   try {
     const user = await User.findById(userId);
-
+    
     if (!user) {
       throw {
         status: 404,

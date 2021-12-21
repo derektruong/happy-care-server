@@ -11,8 +11,8 @@ const createDrug = async ({ createData, user }) => {
       };
     }
 
-    const keyword = Drug(createData);
-    await keyword.save();
+    const drug = Drug(createData);
+    await drug.save();
 
     return;
   } catch (error) {
@@ -25,8 +25,8 @@ const createDrug = async ({ createData, user }) => {
 
 const getAllDrugs = async () => {
   try {
-    const keywords = await Drug.find({ isDeleted: false });
-    return { keywords: leanArray(keywords) };
+    const drugs = await Drug.find({ isDeleted: false });
+    return { drugs: leanArray(drugs) };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -34,8 +34,8 @@ const getAllDrugs = async () => {
 
 const getDrugById = async (id) => {
   try {
-    const keyword = await Drug.findOne({ _id: id, isDeleted: false });
-    return { keyword: leanObject(keyword) };
+    const drug = await Drug.findOne({ _id: id, isDeleted: false });
+    return { drug: leanObject(drug) };
   } catch (error) {
     throw new Error(error.message);
   }

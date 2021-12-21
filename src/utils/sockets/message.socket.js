@@ -75,13 +75,12 @@ class MessageSocket {
         logger.Info(
           `on event 'typing-message' from roomId: ${roomId} with userId: ${userId}`
         );
-        const user = this.userService.getUserInfoById({ userId });
 
         // broadcast to all users in this room
-        socket.broadcast.to(roomId).emit('receive-typing-message', {
-          userName: user.profile.fullname,
-        });
         if (isTyping) {
+          socket.broadcast.to(roomId).emit('receive-typing-message', {
+            userId,
+          });
           return callback({
             ...generateBasicAck(true, false, `typing in room ${roomId}`),
             data: {
@@ -90,8 +89,11 @@ class MessageSocket {
           });
         }
 
+        socket.broadcast.to(roomId).emit('receive-typing-message', {
+          userId: null,
+        });
         return callback({
-          ...generateBasicAck(false, true, 'has no typing'),
+          ...generateBasicAck(true, false, 'has no typing'),
           data: {
             userId: null,
           },
