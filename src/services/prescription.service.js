@@ -35,7 +35,7 @@ const createPrescription = async (createData, user) => {
     const prescription = Prescription(createData);
     await prescription.save();
 
-    return;
+    return { prescriptionId: prescription._id.toString() };
   } catch (error) {
     throw {
       status: 500,
