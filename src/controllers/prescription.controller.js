@@ -4,11 +4,12 @@ const { generateBasicResponse } = require('../utils/helpers/api.helper');
 const createPrescription = async (req, res) => {
   try {
     // authorizate adminstrator
-    await PrescriptionService.createPrescription(req.body, res.user);
+    const rs = await PrescriptionService.createPrescription(req.body, res.user);
 
-    res.json(
-      generateBasicResponse(true, false, 'create prescription successfully')
-    );
+    res.json({
+      ...generateBasicResponse(true, false, 'create prescription successfully'),
+      data: rs,
+    });
   } catch (error) {
     const { status, message } = error;
     if (status === 400) {
@@ -33,7 +34,7 @@ const getPrescriptionByMe = async (req, res) => {
   } catch (error) {
     res.status(500).json(generateBasicResponse(false, true, error.message));
   }
-}
+};
 
 const updatePrescription = async (req, res) => {
   try {
@@ -42,7 +43,12 @@ const updatePrescription = async (req, res) => {
     const updateFields = Object.keys(req.body);
     const updateData = req.body;
 
-    await PrescriptionService.updatePrescription(id, updateFields, updateData, user);
+    await PrescriptionService.updatePrescription(
+      id,
+      updateFields,
+      updateData,
+      user
+    );
 
     res.json(
       generateBasicResponse(true, false, 'updated prescription successfully')
@@ -51,7 +57,7 @@ const updatePrescription = async (req, res) => {
     const { status, message } = error;
     res.status(status).json(generateBasicResponse(false, true, message));
   }
-}
+};
 
 const deletePrescription = async (req, res) => {
   try {
@@ -67,7 +73,7 @@ const deletePrescription = async (req, res) => {
     const { status, message } = error;
     res.status(status).json(generateBasicResponse(false, true, message));
   }
-}
+};
 
 module.exports = {
   createPrescription,
