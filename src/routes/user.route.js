@@ -11,6 +11,8 @@ router.post('/', UserController.createUser);
 
 router.post('/login', UserController.loginUser);
 
+router.post('/change-password', auth, UserController.changePassword);
+
 router.post('/logout', auth, UserController.logoutUser);
 
 // GET

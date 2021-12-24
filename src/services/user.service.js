@@ -38,6 +38,17 @@ const loginUser = async ({ email, password }) => {
   }
 };
 
+const changePassword = async ({ email, oldPassword, newPassword }) => {
+  try {
+    const user = await User.findByCredentials(email, oldPassword);
+    user.password = newPassword;
+    await user.save();
+    return;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const logoutUser = async ({ user }) => {
   try {
     user.token = '';
@@ -159,6 +170,7 @@ const getDoctors = async ({ specId }) => {
 module.exports = {
   createUser,
   loginUser,
+  changePassword,
   logoutUser,
   getUserInfoById,
   updateUser,

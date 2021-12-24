@@ -36,6 +36,23 @@ const loginUser = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const rs = await UserService.changePassword({ 
+      email: res.user.email, 
+      oldPassword: req.body.oldPassword, 
+      newPassword: req.body.newPassword, 
+    });
+
+    res.json({
+      ...generateBasicResponse(true, false, 'password was changed successfully'),
+      data: rs,
+    });
+  } catch (error) {
+    res.status(500).json(generateBasicResponse(false, true, error.message));
+  }
+}
+
 const logoutUser = async (req, res) => {
   try {
     await UserService.logoutUser({ user: res.user });
@@ -131,6 +148,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   createUser,
   loginUser,
+  changePassword,
   logoutUser,
   getUserInfo,
   getUserInfoById,
