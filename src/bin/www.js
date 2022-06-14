@@ -36,7 +36,11 @@ client.connection(io);
  */
 
 server.listen(port, () => {
-  logger.Info(`🚀 Listening on port ${port}, visit http://localhost:${port}`);
+  const environment = process.env.NODE_ENV || 'development';
+  const host = environment === 'development' 
+                ? `http://localhost:${port}`
+                : process.env.HOST;
+  logger.Info(`🚀 Listening on port ${port}, visit ${host}`);
 });
 server.on('error', onError);
 server.on('listening', onListening);

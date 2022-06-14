@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const env = require('./config/env');
 const logger = require('./config/logger');
+const morgan = require('morgan');
 const initRoutes = require('./routes');
 
 const app = express();
@@ -15,6 +16,9 @@ const PUBLIC_PATH = path.join(__dirname, '../public');
 
 // Serve static files from public
 app.use(express.static(PUBLIC_PATH));
+
+// Server http logger
+app.use(morgan(':date ➡️ :method :url :status - :response-time ms - :res[content-length]'));
 
 try {
   // register router here
